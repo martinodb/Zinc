@@ -36,6 +36,13 @@
                  ;[org.swinglabs/swingx "1.6.1"]
                  ;[net.xeon/jspf.core "1.0.2"]
                  
+                 
+                 ;;; this is new
+                 [org.clojure/tools.cli "0.4.1"]
+                 [reply/reply "0.4.3"]
+                 ;;;;;;;
+                 
+                 
                  ]
                  
                  
