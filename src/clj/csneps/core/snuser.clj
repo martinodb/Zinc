@@ -291,13 +291,13 @@
   [["-c" "--cli"] ;; Use CLI (if nil, use GUI)
    ["-h" "--help"]]) ;; Help
 
-(defn -main [& args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    (when (:help options)
-      (println summary)
-      (System/exit 0))
-    (clearkb true)
-    (if (:cli options)
-      (reply.main/launch {:custom-eval '(in-ns 'csneps.core.snuser)})
-      (gui/startGUI))))
+;(defn -main [& args]
+  ;(let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+    ;(when (:help options)
+      ;(println summary)
+      ;(System/exit 0))
+    ;(clearkb true)
+    ;(if (:cli options)
+      ;(reply.main/launch {:custom-eval '(in-ns 'csneps.core.snuser)})
+      ;(gui/startGUI))))
 
