@@ -291,6 +291,15 @@
   [["-c" "--cli"] ;; Use CLI (if nil, use GUI)
    ["-h" "--help"]]) ;; Help
 
+
+
+;;;; martinodb: I had to add this bc -main is commented out.
+(clearkb true)
+;;;;;
+
+
+
+
 ;(defn -main [& args]
   ;(let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     ;(when (:help options)
