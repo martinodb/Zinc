@@ -1,7 +1,10 @@
 (defproject org.clojars.martinodb/zinc "1.0.0-SNAPSHOT"
   :description "An unofficial fork to turn CSNePS into a library"
   :url "https://github.com/martinodb/Zinc"
-  :license "UBPL (University at Buffalo Public License)"
+  :license {:name "University at Buffalo Public License - v 1.0"
+            :url "https://cse.buffalo.edu/sneps/ubpl.pdf"
+            :distribution :repo
+            :comments "same as CSNePS"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.match "0.2.1"]
                  [org.clojure/core.memoize "0.5.9"]
