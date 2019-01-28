@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 5722f2a0b97cc3050dedc0acbaa3370135d7f3b0 martin <martinobal@gmail.com> 1548640525 +0100	clone: from https://github.com/SNePS/CSNePS.git
+5722f2a0b97cc3050dedc0acbaa3370135d7f3b0 179aaac59c94a2bbe18a4ce797eb8bb2575f85a3 martin <martinobal@gmail.com> 1548640621 +0100	checkout: moving from master to semtype-objectlang
+179aaac59c94a2bbe18a4ce797eb8bb2575f85a3 b7614c73b71be1c6cc5e531fa2f29b8458e88075 martin <martinobal@gmail.com> 1548640659 +0100	commit: added script to fetch all branches
+b7614c73b71be1c6cc5e531fa2f29b8458e88075 8f3b56a381a643c3cdef0f65575a4835169fd66d martin <martinobal@gmail.com> 1548641178 +0100	commit: chmod

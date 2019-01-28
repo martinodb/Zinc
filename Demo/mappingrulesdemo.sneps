@@ -1,0 +1,601 @@
+(in-ns 'csneps.core.snuser)
+
+;;; Utility Functionss
+
+(defn numberTerm? 
+  [term]
+  (re-find #"^-?\d+\.?\d*S" (str (:name term))))
+  
+(defn NPhead?
+  [token]
+  (or (seq (find `(~'det ~token ~'?x)))
+      (filter #(seq (find (list % '?x token))) '(nsubj dobj pobj iobj dobj poss xsubj agent))))
+  
+
+;;; Rule 1: generalizeNounsAndVerbs 
+
+;(defun generalizeNounsAndVerbs ()
+;  "Add general syntactic categories of noun and verb."
+;  (withInstances (?tok) of (SyntacticCategoryOf NN ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf NNP ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf NNPS ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf NNS ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf NP ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf NPS ?tok)
+;		 (assert `(SyntacticCategoryOf noun ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+  
+;  (withInstances (?tok) of (SyntacticCategoryOf VBD ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf VBG ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf VBN ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf VBP ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf VB ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs))
+;  (withInstances (?tok) of (SyntacticCategoryOf VBZ ?tok)
+;		 (assert `(SyntacticCategoryOf verb ,?tok))
+;		 (usedRule 'generalizeNounsAndVerbs)))
+
+;; Replace with generic.
+
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NN x))))
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NNP x))))
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NNPS x))))
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NNS x))))
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NP x))))
+(assert '(SyntacticCategoryOf noun (every x (SyntacticCategoryOf NPS x))))
+
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VBD x))))
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VBG x))))
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VBN x))))
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VBP x))))
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VB x))))
+(assert '(SyntacticCategoryOf verb (every x (SyntacticCategoryOf VBZ x))))
+  
+;;; Rule 2: properNounToName
+
+;(defrule properNounToName		; Rule 3
+;    "If the syntactic category of a token is NNP,
+;      then text of the token is the proper name of the entity denoted by the token."
+;  (SyntacticCategoryOf NNP ?token)
+;  (TextOf ?text ?token)
+;  =>
+;  (assert `(hasName ,?token ,?text))
+;  (unassert `(SyntacticCategoryOf NNP ,?token))
+;  (unassert `(TextOf ,?text ,?token))
+;  (:subrule 
+;   (RootOf ?root ?token)
+;   =>
+;   (unassert `(RootOf ,?root ,?token)))
+;  (usedRule 'properNounToName))
+  
+(defrule properNounToName1
+     (SyntacticCategoryOf NNP (every x Token))
+     (TextOf (every y Word) x)
+     =>
+     (assert `(~'hasName ~x ~y))
+     (unassert `(~'SyntacticCategoryOf ~'NNP ~x))
+     (unassert `(~'TextOf ~y ~x)))
+ 
+;(defrule properNounToName1
+;     (SyntacticCategoryOf NNP (every x Token (TextOf (every y Word) x)))
+;     =>
+;     (assert `(~'hasName ~x ~y))
+;     (unassert `(~'SyntacticCategoryOf ~'NNP ~x))
+;     (unassert `(~'TextOf ~y ~x)))
+
+       
+(defrule properNounToName2
+     (SyntacticCategoryOf NNP (every x Token))
+     (RootOf (every z Word) x)
+     =>
+     (unassert `(~'RootOf ~z ~x)))
+       
+(comment
+	(clearkb true)
+   	(defrule properNounToName
+   	     (SyntacticCategoryOf NNP (every x Token))
+   	     (TextOf (every y Word) x)
+   	     =>
+   	     (assert `(~'hasName ~x ~y))
+   	     (unassert `(~'SyntacticCategoryOf ~'NNP ~x))
+   	     (unassert `(~'TextOf ~y ~x))
+   	     (unassert `(~'RootOf ~y ~x))
+   	     (:subrule 
+   	       (RootOf (every z Word (notSame y z)) x)
+   	       => 
+   	       (unassert `(~'RootOf ~z ~x))))	
+   	(assert '(SyntacticCategoryOf NNP n252))
+   	(assert '(TextOf Daniel n252))
+   	(assert '(RootOf Daniel n252))
+   	(assert '(Isa Daniel Word))
+    (assert '(Isa n252 Token))
+)
+    
+;;; Rule 3: organizationHasName
+    
+;(defun organizationHasName ()
+;  "If a token is an organization, then its text is its name."
+;  ;; Example (syn579): "Iraqi Ministry of Interior"
+;  ;;                   and "Iraqi Eighth Brigade"
+;  (withInstances (?org) of (Isa ?org Organization)
+;       (withInstances (?name) of (TextOf ?name ?org)
+;            (assert `(hasName ,?org ,?name))
+;	    (unassert `(TextOf ,?name ,?org))
+;	    (usedRule 'organizationHasName))))
+
+(defrule organizationHasName
+  (Isa (every t Token) Organization)
+  (TextOf (every o Word) t)
+  =>
+  (assert `(~'hasName ~t ~o))
+  (unassert `(~'TextOf ~o ~t)))
+  
+(comment
+	(clearkb true)
+	(defrule organizationHasName
+	  (Isa (every t Token) Organization)
+	  (TextOf (every o Word) t)
+	  =>
+	  (assert `(~'hasName ~t ~o))
+	  (unassert `(~'TextOf ~o ~t)))
+	(assert '(Isa n252 Organization))
+	(assert '(TextOf Ford n252))
+	(assert '(Isa n252 Token))
+	(assert '(Isa Ford Word))
+)
+  
+;;; Rule 4: nnName
+
+;(defrule nnName
+;    "If a person that has a name has an nn modifier
+;      that is also a token with a name,
+;     then the second name is also a name of the person."
+;  ;; Example (syn059): "Mu'adh Nuri Khalid Jihad"
+;  ;; Example of when non-Person is an exception (syn336):
+;  ;;    "Sunni Market"
+;
+;  (hasName ?tok1 ?lastname)
+;  (nn ?tok1 ?tok2)
+;  (hasName ?tok2 ?name)
+;  =>
+;  (set:when (askif `(Isa ,?tok1 Person))
+;    (assert `(hasName ,?tok1 ,?name))
+;    (unassert `(hasName ,?tok2 ,?name)))
+;  (unassert `(nn ,?tok1 ,?tok2)) 
+;  (usedRule 'nnName))
+
+(defrule nnName
+  (nn (every tok1 Token) (every tok2 Token))
+  (hasName tok1 (every lname Word))
+  (hasName tok2 (every name Word (notSame lname name)))
+  => 
+  (:subrule 
+    (Isa tok1 Person)
+    =>
+   (assert `(~'hasName ~tok1 ~name)))
+   (unassert `(~'hasName ~tok2 ~name))
+ (unassert `(~'nn ~tok1 ~tok2)))
+  
+(comment
+	(clearkb true)
+	(defrule nnName
+	  (nn (every tok1 Token) (every tok2 Token))
+	  (hasName tok1 (every lname Word))
+	  (hasName tok2 (every name Word (notSame lname name)))
+	  => 
+	  (:subrule 
+	    (Isa tok1 Person)
+	    =>
+	    (assert `(~'hasName ~tok1 ~name)))
+	    (unassert `(~'hasName ~tok2 ~name))
+	  (unassert `(~'nn ~tok1 ~tok2)))
+	(assert '(hasName n252 Schlegel))
+	(assert '(nn n252 n253))
+	(assert '(hasName n253 Daniel))
+	(assert '(Isa n252 Person))
+	(assert '(Isa n252 Token))
+	(assert '(Isa n253 Token))
+	(assert '(Isa Daniel Word))
+	(assert '(Isa Schlegel Word))
+)
+  
+;;; Rule 5: nounPhraseToInstance
+
+;(defrule nounPhraseToInstance		; Rule 5, modified
+;    "If a common noun is the head of a NP,
+;      and the root of the noun is root,
+;   then the common noun token is an instance of the root type."
+;  (SyntacticCategoryOf NN ?nn)
+;  (:when (isNPhead ?nn))
+;  (RootOf ?root ?nn)
+;  (:unless (numberTermp ?root))
+;  =>
+;  (assert `(Isa ,?nn ,?root)) 
+;  (unassert `(SyntacticCategoryOf NN ,?nn))
+;  (unassert `(RootOf ,?root ,?nn))
+;  (usedRule 'nounPhraseToInstance))
+
+(defrule nounPhraseToInstance
+  (SyntacticCategoryOf NN (every nn Token))
+  (RootOf (every root Word) nn)
+  =>
+  (when (and (not (numberTerm? root)) 
+             (NPhead? nn))
+    (assert `(~'Isa ~nn ~root))
+    (unassert `(~'SyntacticCategoryOf ~'NN ~nn))
+    (unassert `(~'RootOf ~root ~nn))))
+    
+(comment
+	(clearkb true)
+	(assert '(det n252 n253))
+	(defrule nounPhraseToInstance
+	  (SyntacticCategoryOf NN (every nn Token))
+	  (RootOf (every root Word) nn)
+	  =>
+	  (when (and (not (numberTerm? root)) 
+	             (NPhead? nn))
+	    (assert `(~'Isa ~nn ~root))
+	    (unassert `(~'SyntacticCategoryOf ~'NN ~nn))
+	    (unassert `(~'RootOf ~root ~nn))))
+	(assert '(SyntacticCategoryOf NN n252))
+	(assert '(RootOf Blah n252))
+	(assert '(Isa Blah Word))
+	(assert '(Isa n252 Token))
+)
+    
+;;; Rule 6: eventToInstance
+
+;(defun eventToInstance ()
+;  "A verb that is an instance of Event is an instance of its root."
+;  ;; Example (syn064):  "forces detained a ... trafficer"
+;  (withInstances (?event) of (SyntacticCategoryOf verb ?event)
+;       (withInstances (?eventtype) of (RootOf ?eventtype ?event)
+;            (set:when (askif `(Type ,?eventtype Event))
+;	      (assert `(Isa ,?event ,?eventtype))
+;	      (unassert `(RootOf ,?eventtype ,?event))
+;	      (withInstances (?txt) of (TextOf ?txt ?event)
+;                   (unassert `(TextOf ,?txt ,?event)))
+;	      ;; The SyntacticCategoryOf assertion(s) used to be unasserted.
+;	      (usedRule 'eventToInstance)))))
+ 
+(defrule eventToInstance
+  (SyntacticCategoryOf verb (every event Token))
+  (RootOf (every eventtype Word (Isa eventtype Event)) event)
+  => 
+  (assert `(~'Isa ~event ~eventtype))
+  (unassert `(~'RootOf eventtype event))
+  (:subrule
+    (TextOf (every text Word) event)
+    =>
+    (unassert `(~'TextOf ~text ~event))))
+    
+(comment
+	(clearkb true)
+	(defrule eventToInstance
+	  (SyntacticCategoryOf verb (every event Token))
+	  (RootOf (every eventtype Event) event)
+	  => 
+	  (assert `(~'Isa ~event ~eventtype))
+	  (unassert `(~'RootOf eventtype event))
+	  (:subrule
+	    (TextOf (every Text text) event)
+	    =>
+	    (unassert `(~'TextOf ~text ~event))))
+	(assert '(SyntacticCategoryOf verb n235))
+	(assert '(Isa n235 Token))
+	(assert '(RootOf incur n235))
+	(assert '(Isa incur Event))
+)
+
+;;; Rule 7: pluralNounToGroup
+
+;(defun pluralNounToGroup ()
+;  "A token of a plural noun becomes a group of instances of that class."
+;  ;; Shouldn't have to check that the token is the head of a NP,
+;  ;;    since plural nouns should not be dependents of NPs.
+;  (withInstances (?grp) of (SyntacticCategoryOf NNS ?grp)
+;		 (withInstances (?class) of (RootOf ?class ?grp)
+;				(unless (numberTermp ?class)
+;				  (assert `(GroupOf ,?grp ,?class))
+;				  (assert `(Isa ,?grp Group))
+;				  (unassert `(SyntacticCategoryOf NNS ,?grp))
+;				  (unassert `(RootOf ,?class ,?grp))
+;				  (usedRule 'pluralNounToGroup)))
+;		 (withInstances (?txt) of (TextOf ?txt ?grp)
+;				(unassert `(TextOf ,?txt ,?grp)))))
+  
+(defrule pluralNounToGroup
+  (SyntacticCategoryOf NNS (every grp Token))
+  => 
+  (:subrule 
+    (RootOf (every class Word) grp)
+    =>
+    (when-not (numberTerm? class)
+      (assert `(~'GroupOf ~grp ~class))
+      (assert `(~'Isa ~grp ~'Group))
+      (unassert `(~'SyntacticCategoryOf ~'NNS ~grp))
+      (unassert `(~'RootOf ~class ~grp))))
+  (:subrule
+    (TextOf (every text Word) grp)
+    =>
+    (unassert `(~'TextOf ~text ~grp))))
+    
+(comment 
+	(clearkb true)
+	(defrule pluralNounToGroup
+	  (SyntacticCategoryOf NNS (every grp Token))
+	  => 
+	  (:subrule 
+	    (RootOf (every class Word) grp)
+	    =>
+	    (when-not (numberTerm? class)
+	      (assert `(~'GroupOf ~grp ~class))
+	      (assert `(~'Isa ~grp ~'Group))
+	      (unassert `(~'SyntacticCategoryOf ~'NNS ~grp))
+	      (unassert `(~'RootOf ~class ~grp))))
+	  (:subrule
+	    (TextOf (every text Word) grp)
+	    =>
+	    (unassert `(~'TextOf ~text ~grp))))
+	(assert '(SyntacticCategoryOf NNS n235))
+	(assert '(Isa n235 Token))
+	(assert '(RootOf pant n235))
+	(assert '(TextOf pants n235))
+	(assert '(Isa pant Word))
+	(assert '(Isa pants Word))
+)
+    
+;;; Rule 8: subjAction
+
+;(defrule subjAction
+;    "If an action has an explicit subject, subj,
+;      then subj is the agent of the action."
+;  (nsubj ?action ?subj)
+;  (Isa ?action Action)
+;  =>
+;  (assert `(agent ,?action ,?subj))
+;  (unassert `(nsubj ,?action ,?subj))
+;  (usedRule 'subjAction))
+  
+(defrule subjAction
+  (nsubj (every action Token (Isa action Action1)) (every subj Token))
+  =>
+  (assert `(~'agent ~action ~subj))
+  (unassert `(~'nsubj ~action ~subj)))
+  
+(comment 
+	(clearkb true)
+	(defrule subjAction
+	  (nsubj (every action Token (Isa action Action1)) (every subj Token))
+	  =>
+	  (assert `(~'agent ~action ~subj))
+	  (unassert `(~'nsubj ~action ~subj)))
+	(assert '(nsubj n232 n233))
+	(assert '(Isa n232 Token))
+	(assert '(Isa n232 Action1))
+	(assert '(Isa n233 Token))
+)
+  
+;;; Rule 9: dobjAction
+
+;(defun dobjAction ()
+;  "If an action has a direct object, obj,
+;      then obj is the theme of the action."
+;  (withInstances (?action ?obj) of (dobj ?action ?obj)
+;		 (set:when (askif `(Isa ,?action Action))
+;		   (assert `(theme ,?action ,?obj))
+;		   (unassert `(dobj ,?action ,?obj))
+;		   (usedRule 'dobjAction))))
+    
+(defrule dobjAction
+  (dobj (every action Token (Isa action Action1)) (every obj Token))
+  =>
+  (assert `(~'theme ~action ~obj))
+  (unassert `(~'dobj ~action ~obj)))
+  
+(comment 
+	(clearkb true)
+	(defrule dobjAction
+	  (dobj (every action Token (Isa action Action1)) (every obj Token))
+	  =>
+	  (assert `(~'theme ~action ~obj))
+	  (unassert `(~'dobj ~action ~obj)))
+	(assert '(dobj n232 n233))
+	(assert '(Isa n232 Token))
+	(assert '(Isa n232 Action1))
+	(assert '(Isa n233 Token))
+)
+  
+;;; Rule 10: prepToRelation
+
+;(defun prepToRelation ()		; Rule 9b
+;  "If a token is modified by a prepositional phrase,
+;     then consider the preposition to be a relation between the token
+;          and the object(s) of the preposition."
+;  ;; This is for prepositions not otherwise handled,
+;  ;;    because it it so simplistic.
+;  (withInstances (?preptok ?token) of (prep ?token ?preptok)
+;       (withInstances (?noun2) of (pobj ?preptok ?noun2)
+;            (withInstances (?prepwd) of (RootOf ?prepwd ?preptok)
+;			   ;; Solves issues of undefined preps [DRS 8/20/12]
+;			   (sameFrame (sneps:name ?prepwd) 'above)
+;			   (set:unless (set:or.set
+;					;; Dates and Times have already been
+;					;;    moved to the event
+;					(askif `(Isa ,?noun2 Time))
+;					(askif `(Isa ,?noun2 Date)))
+;			     (assert `(,?prepwd ,?token ,?noun2)))
+;			   ;(unassert `(RootOf ,?prepwd ,?preptok))
+;			   ;(unassert `(TextOf ,?prepwd ,?preptok))
+;			   ;(unassert `(prep ,?token ,?preptok))
+;			   (unassert `(pobj ,?preptok ,?noun2))
+;			   (usedRule 'prepToRelation)))))
+  
+	(defrule prepToRelation
+	  (prep (every token Token) (every preptok Token))
+	  (pobj preptok (every noun2 Token (notSame noun2 token preptok)))
+	  (RootOf (every prepwd Word) preptok)
+	  =>
+	  (when (:name prepwd) (sameFrame (symbol (:name prepwd)) 'above))
+	  (assert `(~prepwd ~token ~noun2))
+	  (unassert `(~'pobj ~preptok ~noun2)))
+  
+(comment
+	(clearkb true)
+	(defrule prepToRelation
+	  (prep (every token Token) (every preptok Token))
+	  (pobj preptok (every noun2 Token (notSame noun2 token preptok)))
+	  (RootOf (every prepwd Word) preptok)
+	  =>
+	  (sameFrame (:name prepwd) 'above)
+	  (assert `(~prepwd ~token ~noun2))
+	  (unassert `(~'pobj ~preptok ~noun2)))
+	(assert '(prep n232 n233))
+	(assert '(pobj n233 n234))
+	(assert '(RootOf on n233))
+	(assert '(Isa n232 Token))
+	(assert '(Isa n233 Token))
+	(assert '(Isa n234 Token))
+	(assert '(Isa on Word))
+)
+  
+;;; Rule 11: nnToModifier
+
+;(defun nnToModifier ()
+;  "Any token with an nn syntactic dependent of m
+;      is given a Modifier attribute of the TextOf m."
+;  ;; This is a simplistic rule,
+;  ;;    and should eventually be preempted by more intellgent versions."
+;  (withInstances (?tok ?m) of (nn ?tok ?m)
+;		 (withInstances (?txt) of (TextOf ?txt ?m)
+;				(assert `(Modifier ,?tok ,?txt))
+;				(unassert `(nn ,?tok ,?m))
+;				(unassert `(TextOf ,?txt ,?m))
+;				(usedRule 'nnToModifier))
+;		 ;; If ?tok was a Person
+;		 ;;    and ?m was an NNP, it was changed into a Name
+;		 ;; Example of when non-Person is an exception (syn336):
+;		 ;;    "Sunni Market"
+;		 (withInstances (?txt) of (hasName ?m ?txt)
+;				(set:when (askif `(Isa ,?m Person))
+;				  (assert `(Modifier ,?tok ,?txt))
+;				  (unassert `(nn ,?tok ,?m))
+;				  (unassert `(hasName ,?m ,?txt))
+;				  (usedRule 'nnToModifier)))
+;		 ;; If ?m was plural, it was already changed into a Group
+;		 (withInstances (?txt) of (GroupOf ?m ?txt)
+;				(assert `(Modifier ,?tok ,?txt))
+;				(unassert `(nn ,?tok ,?m))
+;				(unassert `(GroupOf ,?m ,?txt))
+;				(usedRule 'nnToModifier))))
+
+(defrule nnToModifier
+  (nn (every tok Token) (every m Token))
+  => 
+  (:subrule
+    (TextOf (every txt Word) m)
+    =>
+    (assert `(~'Modifier ~tok ~txt))
+    (unassert `(~'nn ~tok ~m))
+    (unassert `(~'TextOf ~txt ~m)))
+  (:subrule
+    (hasName m (every txt Word))
+    => 
+    (assert `(~'Modifier ~tok ~txt))
+    (unassert `(~'nn ~tok ~m))
+    (unassert `(~'hasName ~m ~txt)))
+  (:subrule
+    (GroupOf m (every txt Category))
+    => 
+    (assert `(~'Modifier ~tok ~txt))
+    (unassert `(~'nn ~tok ~m))
+    (unassert `(~'GroupOf ~m ~txt))))
+    
+(comment
+	(clearkb true)
+	(defrule nnToModifier
+	  (nn (every tok Token) (every m Token))
+	  => 
+	  (:subrule
+	    (TextOf (every txt Word) m)
+	    =>
+	    (assert `(~'Modifier ~tok ~txt))
+	    (unassert `(~'nn ~tok ~m))
+	    (unassert `(~'TextOf ~txt ~m)))
+	  (:subrule
+	    (hasName m (every txt Word))
+	    => 
+	    (assert `(~'Modifier ~tok ~txt))
+	    (unassert `(~'nn ~tok ~m))
+	    (unassert `(~'hasName ~m ~txt)))
+	  (:subrule
+	    (GroupOf m (every txt Word))
+	    => 
+	    (assert `(~'Modifier ~tok ~txt))
+	    (unassert `(~'nn ~tok ~m))
+	    (unassert `(~'GroupOf ~m ~txt))))
+	(assert '(nn n232 n233))
+	(assert '(Isa n232 Token))
+	(assert '(Isa n233 Token))
+	;(assert '(TextOf small n233))
+	;(assert '(hasName n233 small))
+	(assert '(GroupOf n233 small))
+	(assert '(Isa small Word))
+)
+    
+;;; Rule 12: amodToModifier
+
+;(defun amodToModifier ()
+;  "Any token with an amod syntactic dependent of m
+;      is given a Modifier attribute of the TextOf m."
+;  ;; This is a simplistic rule,
+;  ;;    and should eventually be preempted by more intellgent versions."
+;  (withInstances (?tok ?m) of (amod ?tok ?m)
+;		 (withInstances (?txt) of (TextOf ?txt ?m)
+;				(assert `(Modifier ,?tok ,?txt))
+;				(unassert `(amod ,?tok ,?m))
+;				(unassert `(TextOf ,?txt ,?m))
+;				(usedRule 'amodToModifier))))
+
+(defrule amodToModifier
+  (amod (every tok Token) (every m Token))
+  (TextOf (every txt Word) m)
+  =>
+  (assert `(~'Modifier ~tok ~txt))
+  (unassert `(~'amod ~tok ~m))
+  (unassert `(~'TextOf ~txt ~m)))
+  
+(comment
+	(clearkb true)
+	(defrule amodToModifier
+	  (amod (every tok Token) (every m Token))
+	  (TextOf (every txt Word) m)
+	  =>
+	  (assert `(~'Modifier ~tok ~txt))
+	  (unassert `(~'amod ~tok ~m))
+	  (unassert `(~'TextOf ~txt ~m)))
+	(assert '(amod n232 n233))
+	(assert '(Isa n232 Token))
+	(assert '(Isa n233 Token))
+	(assert '(TextOf small n233))
+	(assert '(Isa small Word))
+)

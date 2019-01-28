@@ -1,0 +1,77 @@
+;;; Demo of inference on generics.
+;;; Daniel R. Schlegel
+;;; Created 1/2/2014
+
+;;; Generics can be used in three different ways.
+;;; 1) As a rule of inference. (asserted)
+;;; 2) As the antecedent of a deductive rule. (unasserted, usually)
+;;; 3) As the "antecedent" of a quantified term. (asserted, AnalyticGeneric)
+;;; Theoretically, a generic can be all three of these, but:
+;;; a) 3 combined with 1 or 2 would be silly, and might as well not be there, 
+;;;    since AnalyticGenerics are tautologies.
+
+;;; Case 1a: As a rule of inference (asserted). 
+(clearkb true)
+(defineSlot actNoAgent :type Thing)
+(defineSlot theme :type Entity)
+(defineCaseframe 'Propositional '(actNoAgent theme) :fsymbols '(Scare Carry))
+
+(assert '(Carry (every x (Isa x Dog) (Scare x))))
+(assert '(Isa Fido Dog))
+(assert '(Isa Lassie Dog))
+(assert '(Scare Fido))
+(askwh '(Carry (?x (Isa ?x Dog))))
+
+;;; Case 1b: As a rule of inference, with embedded generics.
+(clearkb true)
+(defineSlot entity1 :type Entity)
+(defineSlot entity2 :type Entity)
+(defineCaseframe 'Entity '('Parent entity1))
+(defineCaseframe 'Propositional '('Ancestor entity1 entity2))
+
+(assert '(Ancestor (Parent (every x)) x))
+(assert '(Isa Alex Entity))
+(askwh '(Ancestor ?x Alex))
+
+;;; Case 2: As a rule antecedent (unasserted).
+(clearkb true)
+(defineSlot actNoAgent :type Thing)
+(defineSlot theme :type Entity)
+(defineCaseframe 'Propositional '(actNoAgent theme)
+ :fsymbols '(Scare Carry))
+ 
+(assert '(if (Scare (every x (Isa x Dog))) (Carry x)))
+(assert '(Isa Fido Dog))
+(assert '(Isa Lassie Dog))
+(assert '(Scare Fido))
+(askwh '(Carry (?x (Isa ?x Dog))))
+
+;;; Case 2a: Fully Generic version of Case 2.
+(clearkb true)
+(defineSlot actNoAgent :type Thing)
+(defineSlot theme :type Entity)
+(defineCaseframe 'Propositional '(actNoAgent theme)
+ :fsymbols '(Scare Carry))
+ 
+(assert '(Carry (every x (Isa x Dog) (Scare x))))
+(assert '(Isa Fido Dog))
+(assert '(Isa Lassie Dog))
+(assert '(Scare Fido))
+(askwh '(Carry (?x (Isa ?x Dog))))
+
+;;; Case 2b: A more interesting connective.
+(clearkb true)
+(defineSlot actNoAgent :type Thing)
+(defineSlot theme :type Entity)
+(defineCaseframe 'Propositional '(actNoAgent theme)
+ :fsymbols '(Carry Walk))
+ 
+(assert '(xor (Walk (every x (Isa x Dog))) (Carry x)))
+(assert '(Isa Fido Dog))
+(assert '(Isa Lassie Dog))
+(assert '(not (Carry Fido)))
+(assert '(Carry Lassie))
+(askif '(not (Walk Lassie)))
+(askif '(Carry Fido))
+
+(askwh '(Carry (?x (Isa ?x Dog))))

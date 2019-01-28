@@ -1,0 +1,100 @@
+;;; Demonstrates condition-action rules.
+
+(in-ns 'csneps.core.snuser)
+
+;; Simple rule.
+
+(clearkb true)
+
+(defineType POS (Thing)
+  "A part of speech tag.")
+(defineType Token (Thing)
+  "Start off as tokens created by GATE, later used for other thing.")
+(defineType Word (Thing)
+  "Words that appear in the messages.")
+
+(defineSlot Category :type POS
+	    :docstring "The POS of some word.")
+(defineSlot Dependent :type Token
+	    :docstring "The dependent in a dependency relation.")
+(defineSlot Governor :type Token
+	    :docstring "The head in a dependency relation.")
+(defineSlot Token :type Token :docstring "Some token.")
+(defineSlot Type :type Word
+	    :docstring "The dependency relation in a dependency graph.")
+	    
+(defineCaseframe 'Proposition '(Type Governor Dependent)
+  :docstring "[Dependent] is a [Type] dependent of [Governor]"
+  :fsymbols '(appos))
+(defineCaseframe 'Proposition '('SyntacticCategoryOf Category Token)
+  :docstring "the syntactic category of [Token] is [Category]")
+
+(defrule apposCoref
+  (appos (every tok1 (Isa tok1 Token)) (every tok2 (Isa tok2 Token) (notSame tok1 tok2)))
+  =>
+  (unassert `(~'appos ~tok1 ~tok2))  
+  (when-not (setAnd (askif `(~'SyntacticCategoryOf ~'NNP ~tok1))
+                    (askif `(~'SyntacticCategoryOf ~'NNP ~tok2)))
+    (assert `(~'Equiv #{~tok1 ~tok2}))))
+  
+(assert '(appos n1 n2))
+(assert '(Isa n1 Token))
+(assert '(Isa n2 Token))
+(assert '(SyntacticCategoryOf NN n1))
+(assert '(SyntacticCategoryOf JJ n2))
+(assert '(Isa NN POS))
+(assert '(Isa JJ POS))
+(adopt-rule 'apposCoref)
+
+
+;; Simple rule: 
+
+(clearkb true)
+(krnovice true)
+
+(defrule simplerule
+  (Isa (every x) Animal)
+  => 
+  (assert `(~'Alive ~x)))
+  
+(assert '(Isa Ren Animal))
+(assert '(Isa Ren Entity))
+(adopt-rule 'simplerule)
+
+;; Subrules: 
+
+(clearkb true)
+
+(defrule subruletest
+  (Isa (every x) Animal)
+  => 
+  (:subrule
+    (Isa x Beast)
+    => 
+    (assert `(~'Isa ~x ~'ScaryThing))))
+    
+(assert '(Isa Adam Animal))
+(assert '(Isa Adam Beast))
+(assert '(Isa Adam Entity))
+(adopt-rule 'subruletest)
+(list-terms)
+
+;; test 2
+
+
+(clearkb)
+
+(defrule subruleTest
+  (RootOf pick (every tok (Isa tok Token)))
+  => 
+  (:subrule
+    (TextOf (every pickwd (Isa pickwd Word)) tok)
+    => 
+    (unassert `(~'TextOf ~pickwd ~tok))))
+    
+(assert '(RootOf pick n21))
+(assert '(TextOf picked n21))
+(assert '(Isa n21 Token))
+(assert '(Isa picked Word))
+
+(adopt-rule 'subruleTest)
