@@ -1,7 +1,7 @@
 (defproject org.clojars.martinodb/zinc "1.0.0-SNAPSHOT"
   :description "An unofficial fork to turn CSNePS into a library"
-  :url https://github.com/martinodb/Zinc
-  :license UBPL
+  :url "https://github.com/martinodb/Zinc"
+  :license "University of Buffalo Public License"
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.match "0.2.1"]
                  [org.clojure/core.memoize "0.5.9"]
@@ -11,32 +11,10 @@
                  [org.clojure/tools.nrepl "0.2.3"]
                  
                  
-                 ;[net.sf.jung/jung-graph-impl "2.0.1"]
-                 ;[net.sf.jung/jung-api "2.0.1"]
-                 ;[net.sf.jung/jung-visualization "2.0.1"]
-                 ;[net.sf.jung/jung-io "2.0.1"]
-                 ;[net.sf.jung/jung-algorithms "2.0.1"]
-                 ;[net.sf.jung/jung-jai "2.0.1"]
-                 ;[net.sf.jung/jung-3d "2.0.1"]
-                 
                  
                  
                  [junit/junit "3.8.2"]
                  
-                 ;[jdom/jdom "1.0"]
-                 ;[org.freehep/freehep-graphics2d "2.4"]
-                 ;[org.freehep/freehep-graphicsio "2.4"]
-                 ;[org.freehep/freehep-graphicsbase "2.4"]
-                 ;[org.freehep/freehep-io "2.2.2"]
-                 ;[org.freehep/freehep-graphicsio-emf "2.4"]
-                 ;[org.freehep/freehep-graphicsio-java "2.4"]
-                 ;[org.freehep/freehep-graphicsio-pdf "2.4"]
-                 ;[org.freehep/freehep-graphicsio-ps "2.4"]
-                 ;[org.freehep/freehep-graphicsio-svg "2.4"]
-                 ;[org.freehep/freehep-graphicsio-swf "2.4"]
-                 ;[jpedal/jpedal "4.45-b-105"]
-                 ;[org.swinglabs/swingx "1.6.1"]
-                 ;[net.xeon/jspf.core "1.0.2"]
                  
                  
                  ;;; this is new
@@ -46,14 +24,7 @@
                  
                  
                  ]
-                 
-                 
-  :dev [[org.clojure/tools.namespace "0.2.4"]]
-  :repositories {"FreeHEP" "http://java.freehep.org/maven2"
-                 "jpedal" "http://maven.geomajas.org"
-                 "local" ~(str (.toURI (java.io.File. "local_maven_repo")))
-                 }
-  :plugins [[lein-swank "1.4.5"]]
+  
   :source-paths ["src/clj/"]
   :source-path "src/clj/"
   :java-source-paths ["src/jvm/"] ;leiningen 2 compat.
@@ -64,7 +35,7 @@
   ;:main csneps.core.snuser
   
   
-  :local-repo  "../../bobtailbot/local-m2"
+  ;:local-repo  "../../bobtailbot/local-m2"
   
   
   )
