@@ -84,4 +84,4 @@ $
 # LICENSE
 
 
-[University of Buffalo Public License](https://cse.buffalo.edu/sneps/ubpl.pdf).
+[University at Buffalo Public License](https://cse.buffalo.edu/sneps/ubpl.pdf).
