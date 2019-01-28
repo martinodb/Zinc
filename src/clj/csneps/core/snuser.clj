@@ -266,9 +266,9 @@
   []
   (reset! snip/goaltrace false))
 
-(defn startGUI
-  ([] (gui/startGUI))
-  ([termset] (gui/startGUI termset)))
+;(defn startGUI
+  ;([] (gui/startGUI))
+  ;([termset] (gui/startGUI termset)))
 
 (defn load
   [fname]
