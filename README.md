@@ -1,50 +1,5 @@
-CSNePS - Concurrent SNePS
+Zinc - An unofficial fork of CSNePS to turn it into a library
 ======
 
-CSNePS is an implementation (and extension of) of the <a href="http://www.cse.buffalo.edu/sneps/Projects/sneps3.html">SNePS 3</a> knowledge representation and reasoning system specification. CSNePS is written in the Clojure programming language, and is designed to utilize concurrency during inference. 
 
-## Running CSNePS
-
-CSNePS should be run using [Leiningen](https://leiningen.org/) for the best experience. Once you've installed Leiningen you can run CSnePS by changing into the CSNePS directory and typing either:
-
-```lein run```
-
-to launch CSNePS with its GUI, or 
-
-```lein run -c```
-
-to launch the command line interface for CSNePS.
-
-## Further Documentation
-
-While CSNePS is still under heavy development, the version available here should be usable. There is some documentation provided in the manual.pdf file in the doc folder,  but most documentation is currently in the form of papers written about SNePS 3 and portions of CSNePS. 
-
-If you intend to use CSNePS it is best to first acquaint yourself with the SNePS 3 specification: 
-
-Stuart C. Shapiro, <A
-HREF="http://www.cse.buffalo.edu/~shapiro/Papers/sneps3intro.pdf">An Introduction to SNePS 3</A>.
-In Bernhard Ganter &amp; Guy W. Mineau, Eds. <CITE> Conceptual
-Structures: Logical, Linguistic, and Computational Issues. <A
-HREF="http://www.springer.de/comp/lncs/">Lecture Notes in Artificial
-Intelligence 1867</A>.</CITE> Springer-Verlag, Berlin, 2000, 510-524.
-
-Daniel R. Schlegel and Stuart C. Shapiro, <a
-  href="http://www.cse.buffalo.edu/~shapiro/Papers/schsha2012lnai.pdf">Visually Interacting with a Knowledge
-  Base Using Frames, Logic, and Propositional Graphs</a>. In Madalina Croitoru,
-  Sebastian Rudolph, Nic Wilson, John Howse and Olivier Corby, Eds., <cite>
-  Graph Structures for Knowledge Representation and Reasoning, Lecture Notes in
-  Artificial Intelligence 7205</cite>, Springer-Verlag, Berlin, 2012, 188-207.
-  
-Next, you should aquiant yourself with Inference Graphs, which provide the natural deduction and subsumption reasoning abilities of CSNePS. 
-
-Daniel R. Schlegel, <a href="http://www.cse.buffalo.edu/sneps/Bibliography/schlegel-diss.pdf">Concurrent
-Inference Graphs</a>, PhD Dissertation, Department of Computer Science and
-Engineering, State University of New York at Buffalo, September 3, 2014.
-
-Daniel R. Schlegel and Stuart C. Shapiro, <a
-     href="http://www.cse.buffalo.edu/~shapiro/Papers/schsha15a">Inference Graphs: Combining Natural
-     Deduction and Subsumption Inference in a Concurrent Reasoner</a>. In
-     <cite>Proceedings of the Twenty-Ninth Conference on Artificial Intelligence
-     (AAAI-15)</cite>, in press.
-  
-  
+This is an experiment to turn [CSNePS](https://github.com/SNePS/CSNePS/tree/semtype-objectlang) into a library instead of a standalone application. For starters, I'm removing the GUI and the -main function. A few other changes are needed. Nearly all the substantial code is from the original. I'm changing the name to avoid confusion and trademark problems. I have no relation with or endorsement from CSNePS developers. For more information on CSNePS, see the link.  I got some basic functionality working, but there's still a lot to do.
