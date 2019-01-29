@@ -1,8 +1,8 @@
-(ns csneps.core.build
-  (:require [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.printer :as print]
-            [csneps.core.relations :as slot]
+(ns zinc.core.build
+  (:require [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.printer :as print]
+            [zinc.core.relations :as slot]
             [clojure.core.match :as match]
             [clojure.math.numeric-tower :as math]
             [clojure.math.combinatorics :as cb]
@@ -10,10 +10,10 @@
             [clojure.set :as set]
             [clojure.string])
   (:refer-clojure :exclude [assert find]) ;;Possible bug: This breaks loading clojure.math.combinatorics for no reason?
-  (:use [csneps.core]
-        [csneps.util]
+  (:use [zinc.core]
+        [zinc.util]
         [clojure.walk :as walk :only [prewalk prewalk-replace postwalk-replace]]
-        [csneps.core.find-utils]))
+        [zinc.core.find-utils]))
 
 ;(refer-clojure :exclude '[assert])
 
@@ -83,7 +83,7 @@
      2) It is a term with syntactic type Arbitrary, or
      3) It is a set of terms in which any one term satisfies 1 or 2."
   [term-or-termset]
-  (let [gt (fn [term] (when (or (generic-term? term) (isa? (type-of term) :csneps.core/Arbitrary))
+  (let [gt (fn [term] (when (or (generic-term? term) (isa? (type-of term) :zinc.core/Arbitrary))
                          term))]
     (if (set? term-or-termset)
       (remove nil? (doall (map gt term-or-termset)))
@@ -102,7 +102,7 @@
      2) It is a term with syntactic type QueryVariable, or
      3) It is a set of terms in which any one term satisfies 1 or 2."
   [term-or-termset]
-  (let [gt (fn [term] (when (or (whquestion-term? term) (isa? (type-of term) :csneps.core/QueryVariable))
+  (let [gt (fn [term] (when (or (whquestion-term? term) (isa? (type-of term) :zinc.core/QueryVariable))
                          term))]
     (if (set? term-or-termset)
       (remove nil? (doall (map gt term-or-termset)))
@@ -247,8 +247,8 @@
     
     ;;Now that we made it, add it to the unif tree, unify it, and build appropriate channels.
     (when (and (not existing-term)
-               (#{:csneps.core/Molecular :csneps.core/Categorization
-                  :csneps.core/Closure :csneps.core/Negation} (:type term)))
+               (#{:zinc.core/Molecular :zinc.core/Categorization
+                  :zinc.core/Closure :zinc.core/Negation} (:type term)))
       (doseq [unif (match term)]
         (build-unifier-channels unif))
       (addTermToUnificationTree term))
@@ -288,7 +288,7 @@
         :else
           (let [fillers (build (list* 'setof (rest args)) semtype subst #{})
                 term (build-molecular-node
-                       cf (list fillers) :csneps.core/Andor semtype
+                       cf (list fillers) :zinc.core/Andor semtype
                        :fsemtype (semantic-type-of fillers)
                        :min min :max max)]
             (build-channels term)
@@ -332,7 +332,7 @@
           (let [fillers (build (list* 'setof (rest args)) semtype subst #{})
                 term (build-channels 
                        (build-molecular-node
-                         cf (list fillers) :csneps.core/Thresh semtype
+                         cf (list fillers) :zinc.core/Thresh semtype
                          :fsemtype (semantic-type-of fillers)
                          :min min :max max))]
             term)))))
@@ -364,7 +364,7 @@
           (let [term (build-channels
                        (build-molecular-node
                          cf (list (build ant semtype substitution #{}) (build cq semtype substitution #{}))
-                         :csneps.core/Numericalentailment semtype
+                         :zinc.core/Numericalentailment semtype
                          :fsemtype semtype :min i))]
             term)))))
 
@@ -392,13 +392,13 @@
       (doseq [rst (seq (@restriction-set v))]
         (assert rst (ct/find-context 'OntologyCT)))
       (build-quantterm-channels v)
-      ;(when (= (syntactic-type-of v) :csneps.core/Arbitrary) (lattice-insert v))
+      ;(when (= (syntactic-type-of v) :zinc.core/Arbitrary) (lattice-insert v))
       )
     (let [cf (cf/find-frame 'rule)
-          rule (build-channels (build-molecular-node cf (list name built-lhs act subrules) :csneps.core/CARule :Policy))]
+          rule (build-channels (build-molecular-node cf (list name built-lhs act subrules) :zinc.core/CARule :Policy))]
       (dosync 
         (ref-set (:print-forms rule) (clojure.string/join "\n" forms))
-        (alter csneps.core/primaction assoc act actfn))
+        (alter zinc.core/primaction assoc act actfn))
       rule)))
 
 (defn build-carule-channels
@@ -479,22 +479,22 @@
   [rnode]
   (let [slot-map (cf/dcsRelationTermsetMap rnode)]
     (case (type-of rnode)
-      :csneps.core/CARule
+      :zinc.core/CARule
       (build-carule-channels rnode)
-      :csneps.core/Negation
+      :zinc.core/Negation
       (build-internal-channels rnode (get slot-map (slot/find-slot 'nor)) (get slot-map (slot/find-slot 'nor)))
-      :csneps.core/Conjunction
+      :zinc.core/Conjunction
       (build-internal-channels rnode (get slot-map (slot/find-slot 'and)) (get slot-map (slot/find-slot 'and)))
-      (:csneps.core/Andor 
-       :csneps.core/Disjunction 
-       :csneps.core/Xor
-       :csneps.core/Nand)
+      (:zinc.core/Andor 
+       :zinc.core/Disjunction 
+       :zinc.core/Xor
+       :zinc.core/Nand)
       (build-internal-channels rnode (get slot-map (slot/find-slot 'andorargs)) (get slot-map (slot/find-slot 'andorargs)))
-      (:csneps.core/Thresh
-       :csneps.core/Equivalence)
+      (:zinc.core/Thresh
+       :zinc.core/Equivalence)
       (build-internal-channels rnode (get slot-map (slot/find-slot 'threshargs)) (get slot-map (slot/find-slot 'threshargs)))
-      (:csneps.core/Numericalentailment
-       :csneps.core/Implication)
+      (:zinc.core/Numericalentailment
+       :zinc.core/Implication)
       (build-internal-channels rnode (get slot-map (slot/find-slot 'ant)) (get slot-map (slot/find-slot 'cq)))))
   rnode)
 
@@ -512,9 +512,9 @@
                  (if (wftname? (str fcn))
                    (@caseframe (get-term fcn))
                    fcn)
-                 :csneps.core/Atom
+                 :zinc.core/Atom
                  (:name fcn)
-                 :csneps.core/Molecular
+                 :zinc.core/Molecular
                  (@caseframe fcn)
                  (error
                    "The function \"symbol\", "fcn", is not an acceptable function \"symbol\".")))
@@ -551,7 +551,7 @@
                                   #{:WhQuestion}
                                   (seq genfills) 
                                   #{:Generic}))
-          molnode (build-molecular-node cf fillers :csneps.core/Molecular semtype :properties properties)]
+          molnode (build-molecular-node cf fillers :zinc.core/Molecular semtype :properties properties)]
                                         ;(if (seq genfills)
                                           ;(if (subtypep semtype :Generic) semtype :Generic)
                                           ;semtype))]
@@ -622,7 +622,7 @@
 ;  "Returns the given term,
 ;       and if necessary, adjusting its semantic type so that
 ;       it is of the semantic type semtype."
-  [:csneps.core/Term] [expr semtype substitution properties]
+  [:zinc.core/Term] [expr semtype substitution properties]
   (adjustType expr (semantic-type-of expr) semtype))
 
 (defmethod build
@@ -646,7 +646,7 @@
             (alter TERMS assoc expr term)
             (alter type-map assoc expr semtype)
             (when (subtypep semtype :Proposition) (alter support assoc term #{['hyp #{(:name term)}]}))
-            (alter msgs assoc term (create-message-structure :csneps.core/Atom nil)))
+            (alter msgs assoc term (create-message-structure :zinc.core/Atom nil)))
           (when (= expr 'True)
             (assert term (ct/find-context 'OntologyCT)))
           (when (= expr 'False)
@@ -720,7 +720,7 @@
                                     #{:Generic}))
                 molnode (build-molecular-node (cf/find-frame 'Isa)
                                               (list entity category)
-                                              :csneps.core/Categorization
+                                              :zinc.core/Categorization
                                               semtype
                                               :properties properties)]
             (when (seq genfills)
@@ -736,7 +736,7 @@
               (let [fillers (build (set (rest expr)) semtype substitution #{})]
                 (build-channels (build-molecular-node cf 
                                                       (list fillers) 
-                                                      :csneps.core/Conjunction 
+                                                      :zinc.core/Conjunction 
                                                       semtype 
                                                       :fsemtype (semantic-type-of fillers)
                                                       :min (count fillers)
@@ -749,7 +749,7 @@
                   (first (second expr))
                   (build-channels (build-molecular-node cf 
                                                         (rest expr) 
-                                                        :csneps.core/Conjunction 
+                                                        :zinc.core/Conjunction 
                                                         semtype 
                                                         :fsemtype 
                                                         (semantic-type-of (second expr))
@@ -758,7 +758,7 @@
                 ;; otherwise, just build the conjunct.
                 (build (second expr) semtype substitution #{}))
             :else
-              (build 'True :csneps.core/Proposition substitution #{}))
+              (build 'True :zinc.core/Proposition substitution #{}))
           (error "There is no frame associated with and."))
 
       or
@@ -768,14 +768,14 @@
           (rest (rest expr))
           (let [fillers (build (set (rest expr)) semtype substitution #{})]
             (build-channels 
-              (build-molecular-node cf (list fillers) :csneps.core/Disjunction semtype :fsemtype (semantic-type-of fillers)
+              (build-molecular-node cf (list fillers) :zinc.core/Disjunction semtype :fsemtype (semantic-type-of fillers)
                                     :min 1 :max (count fillers))))
           (rest expr)
           ;; If only one disjunct, just build the disjunct.
           (build (second expr) semtype substitution #{})
           :else
           ;; A disjunction with no disjuncts is the False proposition
-          (build 'False :csneps.core/Term substitution #{}))
+          (build 'False :zinc.core/Term substitution #{}))
         (error "There is no frame associated with or"))
 
       xor
@@ -785,14 +785,14 @@
           (rest (rest expr))
           (let [fillers (build (set (rest expr)) semtype substitution #{})]
             (build-channels 
-              (build-molecular-node cf (list fillers) :csneps.core/Xor semtype :fsemtype (semantic-type-of fillers)
+              (build-molecular-node cf (list fillers) :zinc.core/Xor semtype :fsemtype (semantic-type-of fillers)
                                     :min 1 :max 1)))
           (rest expr)
           ;; If only one disjunct, just build the disjunct.
           (build (second expr) semtype substitution #{})
           :else
           ;; An exclusive disjunction with no disjuncts is the False proposition
-          (build 'False :csneps.core/Term substitution #{}))
+          (build 'False :zinc.core/Term substitution #{}))
         (error "There is no frame associated with xor"))
       
       nand
@@ -805,14 +805,14 @@
                   (> (count (second expr)) 1)))
            (let [fillers (build (set (rest expr)) semtype substitution #{})]
              (build-channels 
-               (build-molecular-node cf (list fillers) :csneps.core/Nand semtype :fsemtype (semantic-type-of fillers)
+               (build-molecular-node cf (list fillers) :zinc.core/Nand semtype :fsemtype (semantic-type-of fillers)
                                      :min 0 :max (dec (count fillers)))))
            (= (count expr) 2)
            ;; If only one argument, build the negation of the argument.
            (build (list 'not (second expr)) semtype substitution #{})
            :else
            ;; A negatedconjunction with no arguments is the False proposition
-           (build 'False :csneps.core/Term substitution #{}))
+           (build 'False :zinc.core/Term substitution #{}))
          (error "There is no frame associated with nand"))
 
       andor
@@ -832,7 +832,7 @@
                 fillers2 (build (nth expr 2) semtype substitution #{})]
             (build-channels 
               (build-molecular-node
-                cf (list fillers1 fillers2) :csneps.core/Implication semtype
+                cf (list fillers1 fillers2) :zinc.core/Implication semtype
                 :fsemtype semtype :min (if (set? fillers1)
                                          (count fillers1)
                                          1)))))
@@ -846,7 +846,7 @@
           (let [fillers (build (set (rest expr)) semtype substitution #{})]
             (build-channels
               (build-molecular-node
-                cf (list fillers) :csneps.core/Equivalence semtype
+                cf (list fillers) :zinc.core/Equivalence semtype
                 :fsemtype (semantic-type-of fillers)
                 :min 1 :max (dec (count fillers)))))
           (rest expr)
@@ -859,13 +859,13 @@
               ;; otherwise, build the iff
               (build-channels 
                 (build-molecular-node
-                  cf (rest expr) :csneps.core/Equivalence semtype
+                  cf (rest expr) :zinc.core/Equivalence semtype
                   :fsemtype (semantic-type-of (second expr))
                   :min 1 :max (dec (count (first (rest expr)))))))
-            (build 'True :csneps.core/Term substitution #{}))
+            (build 'True :zinc.core/Term substitution #{}))
           :else
           ;; A iff with no fillers is the True proposition
-          (build 'True :csneps.core/Term substitution #{}))
+          (build 'True :zinc.core/Term substitution #{}))
         (error "There is no frame associated with iff."))
 
        (not nor)
@@ -877,12 +877,12 @@
            (let [fillers (build (set (rest expr)) semtype substitution #{})]
              (build-channels
                (build-molecular-node
-                 cf (list fillers) :csneps.core/Negation semtype
+                 cf (list fillers) :zinc.core/Negation semtype
                  :fsemtype (semantic-type-of fillers))))
            ;(rest expr)		; exactly one argument
            ;  (build-canonical-negation (second expr) semtype)
            :else			; (not) = (nor) = T
-           (build 'True :csneps.core/Term substitution #{}))
+           (build 'True :zinc.core/Term substitution #{}))
          (error "There is no frame associated with nor."))
 
       (thnot thnor)
@@ -892,10 +892,10 @@
           (rest expr)		; at least one argument
           (let [fillers (build (set (rest expr)) semtype substitution #{})]
             (build-molecular-node
-              cf (list fillers) :csneps.core/Negationbyfailure semtype
+              cf (list fillers) :zinc.core/Negationbyfailure semtype
               :fsemtype (semantic-type-of fillers)))
           :else			; (thnot) = (thnor) = T
-          (build 'True :csneps.core/Term substitution #{}))
+          (build 'True :zinc.core/Term substitution #{}))
         (error "There is no frame associated with thnor."))
 
 
@@ -909,7 +909,7 @@
             fillers (build (set (rest (rest expr))) :Proposition substitution #{})]
         (build-molecular-node (cf/find-frame 'close)
 	                            (list fillers)
-	                            :csneps.core/Closure
+	                            :zinc.core/Closure
 	                            semtype
                               :closed-vars closed-vars))
 
@@ -995,7 +995,7 @@
 (defn internal-restrict
   [var]
   (let [res (@restriction-set var)
-        categorizations (filter #(isa? (syntactic-type-of %) :csneps.core/Categorization) res)
+        categorizations (filter #(isa? (syntactic-type-of %) :zinc.core/Categorization) res)
         categories (apply clojure.set/union (map #(second (@down-cableset %)) categorizations))
         semcats (filter semtype? (map #(keyword (:name %)) categories))]
     (doall (map #(adjustType var (semantic-type-of var) %) semcats))))
@@ -1089,7 +1089,7 @@
         (let [restrictions (clojure.set/union (@restriction-set var)
                                               (set (map #(build % :Propositional substitution #{:WhQuestion :Analytic}) rsts)))]
           (alter restriction-set assoc var restrictions)
-          (alter msgs assoc var (create-message-structure :csneps.core/QueryVariable nil))
+          (alter msgs assoc var (create-message-structure :zinc.core/QueryVariable nil))
           ;(dosync (doseq [r restrictions]
           ;          (alter property-map assoc r (set/union (@property-map r) #{:WhQuestion :Analytic}))))
           )
@@ -1099,7 +1099,7 @@
                                       (set (map #(substitution %) deps)))] 
           (alter dependencies assoc var deps)
           (alter restriction-set assoc var restrictions)
-          (alter msgs assoc var (create-message-structure :csneps.core/Indefinite nil))
+          (alter msgs assoc var (create-message-structure :zinc.core/Indefinite nil))
           ;(dosync (doseq [r restrictions]
           ;          (alter property-map assoc r (set/union (@property-map r) #{:Generic :Analytic}))))
           )
@@ -1107,7 +1107,7 @@
         (let [restrictions (clojure.set/union (@restriction-set var)
                                               (set (map #(build % :Propositional substitution #{:Generic :Analytic}) rsts)))] 
           (alter restriction-set assoc var restrictions)
-          (alter msgs assoc var (create-message-structure :csneps.core/Arbitrary restrictions))
+          (alter msgs assoc var (create-message-structure :zinc.core/Arbitrary restrictions))
           ;(dosync (doseq [r restrictions]
           ;          (alter property-map assoc r (set/union (@property-map r) #{:Generic :Analytic}))))
           ))

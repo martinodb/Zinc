@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (defn sort-based-derivable
   "If the categorization Proposition p
@@ -10,7 +10,7 @@
   ;; sort-based-derivable only considers the sorts of terms.
   ;; So it doesn't consider any term that logically implies p.
   ;; So it doesn't need a termstack argument.
-  (if-not (= (syntactic-type-of p) :csneps.core/Categorization)
+  (if-not (= (syntactic-type-of p) :zinc.core/Categorization)
     #{}
     (let [members (seq (find-utils/findto p 'member))]
       (if (= (count members)

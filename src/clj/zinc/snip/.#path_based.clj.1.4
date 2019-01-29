@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip.snip)
+(in-ns 'zinc.snip.snip)
 
 (declare get-tos get-froms build-path-fn)
 
@@ -211,7 +211,7 @@
                                                     (map #(pb-findfroms % slot) fillers))
                                                   (cf/dcsRelationTermsetMap p)))))]
     (println "tt" t))
-  (if (isa? (csneps/type-of p) :csneps.core/Molecular)
+  (if (isa? (csneps/type-of p) :zinc.core/Molecular)
     (let [results (remove #(not (ct/asserted? % context))
                           (apply intersection
                                  (map set 

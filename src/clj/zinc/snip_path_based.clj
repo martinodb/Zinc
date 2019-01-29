@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (declare get-tos get-froms build-path-fn)
 
@@ -211,7 +211,7 @@
   [p context]
   (when @goaltrace
     (cl-format true "~&I will consider using Path-Based inference.~%"))
-  (if (isa? (type-of p) :csneps.core/Molecular)
+  (if (isa? (type-of p) :zinc.core/Molecular)
     (let [dcs (:down-cableset p)
           results (remove #(not (ct/asserted? % context))
                           (apply intersection

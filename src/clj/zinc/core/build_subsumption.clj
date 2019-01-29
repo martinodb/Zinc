@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (declare omega)
 
@@ -154,39 +154,39 @@
   (fn [term1 term2] [(syntactic-type-of term1) (syntactic-type-of term2)]))
 
 (defmethod subsumes?
-  [:csneps.core/Arbitrary :csneps.core/Arbitrary] [term1 term2]
+  [:zinc.core/Arbitrary :zinc.core/Arbitrary] [term1 term2]
   (restriction-subset? term1 term2))
 
 (defmethod subsumes?
-  [:csneps.core/QueryVariable :csneps.core/Arbitrary] [term1 term2]
+  [:zinc.core/QueryVariable :zinc.core/Arbitrary] [term1 term2]
   (restriction-subset? term1 term2)) ;; ??? I'm not sure.
 
 (defmethod subsumes?
-  [:csneps.core/QueryVariable :csneps.core/Indefinite] [term1 term2]
+  [:zinc.core/QueryVariable :zinc.core/Indefinite] [term1 term2]
   (restriction-subset? term1 term2)) ;; ??? I'm not sure.
 
 (defmethod subsumes?
-  [:csneps.core/QueryVariable :csneps.core/QueryVariable] [term1 term2]
+  [:zinc.core/QueryVariable :zinc.core/QueryVariable] [term1 term2]
   nil) ;; ??? I'm not sure.
 
 (defmethod subsumes?
-  [:csneps.core/Arbitrary :csneps.core/QueryVariable] [term1 term2]
+  [:zinc.core/Arbitrary :zinc.core/QueryVariable] [term1 term2]
   (restriction-subset? term1 term2)) ;; ??? I'm not sure.
 
 (defmethod subsumes?
-  [:csneps.core/Indefinite :csneps.core/QueryVariable] [term1 term2]
+  [:zinc.core/Indefinite :zinc.core/QueryVariable] [term1 term2]
   nil)
 
 (defmethod subsumes?
-  [:csneps.core/Indefinite :csneps.core/Indefinite] [term1 term2]
+  [:zinc.core/Indefinite :zinc.core/Indefinite] [term1 term2]
   (restriction-subset? term1 term2))
 
 (defmethod subsumes?
-  [:csneps.core/Indefinite :csneps.core/Arbitrary] [term1 term2]
+  [:zinc.core/Indefinite :zinc.core/Arbitrary] [term1 term2]
   nil)
 
 (defmethod subsumes? 
-  [:csneps.core/Arbitrary :csneps.core/Indefinite] [term1 term2]
+  [:zinc.core/Arbitrary :zinc.core/Indefinite] [term1 term2]
   ;; Any elephant subsumes some albino elephant.
   (or 
     ;; Any elephant subsumes some albino elephant.

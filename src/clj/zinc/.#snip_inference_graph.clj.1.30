@@ -83,7 +83,7 @@
     (doall (map #(submit-to-channel % msg) @(:i-channels term))))
   ;; Conjunctions:
   ;; Conjunctions have no antecedents if they are true, so the Y-INFER messages must be passed on here
-  (when (= (csneps/type-of term) :csneps.core/Conjunction)
+  (when (= (csneps/type-of term) :zinc.core/Conjunction)
     (let [msg (new-message {:origin term, :support-set #{term}, :type 'Y-INFER, :fwd-infer? fwd-infer})]
       (doall (map #(submit-to-channel % msg) @(:y-channels term)))))
   ;; Negations:
@@ -201,7 +201,7 @@
     (when debug (send screenprinter (fn [_]  (println "Unassert: " message "at" node))))
     (cond 
       (and (not ych?)
-           (= (type node) csneps.core.Implication))
+           (= (type node) zinc.core.Implication))
       (doseq [ch @(:y-channels node)]
         (.execute executorService (priority-partial Integer/MAX_VALUE unassert (:destination ch) (new-message {:origin (:origin message) :type 'UNASSERT}) true)))
       (let [oscont (map #(contains? % (:origin message)) @(:support node))]
@@ -357,12 +357,12 @@
         ich @(:i-channels node)]
     (when debug (send screenprinter (fn [_]  (println case1 case2))))
     (cond
-      (isa? (csneps/syntactic-type-of node) :csneps.core/Andor)
+      (isa? (csneps/syntactic-type-of node) :zinc.core/Andor)
       (if case2
         [true (zipmap ich (repeat (count ich) dermsg-t))])
         ;[false (zipmap ich (repeat (count ich) dermsg-f))])
         ;(and (not case1) case2) (zipmap ich (repeat (count ich) dermsg)))
-      (isa? (csneps/syntactic-type-of node) :csneps.core/Thresh)
+      (isa? (csneps/syntactic-type-of node) :zinc.core/Thresh)
       (if case1
         [true (zipmap ich (repeat (count ich) dermsg-t))]))))
         ;[false (zipmap ich (repeat (count ich) dermsg-f))]))))
@@ -405,16 +405,16 @@
   [message node]
   (when debug (send screenprinter (fn [_]  (println "Inferring in:" node))))
   (case (csneps/type-of node)
-    :csneps.core/Negation (negation-elimination message node)
-    :csneps.core/Conjunction (conjunction-elimination message node)
-    (:csneps.core/Numericalentailment
-     :csneps.core/Implication) (numericalentailment-elimination message node)
-    (:csneps.core/Andor 
-     :csneps.core/Disjunction 
-     :csneps.core/Xor
-     :csneps.core/Nand)  (andor-elimination message node)
-    (:csneps.core/Thresh
-     :csneps.core/Equivalence) (thresh-elimination message node)
+    :zinc.core/Negation (negation-elimination message node)
+    :zinc.core/Conjunction (conjunction-elimination message node)
+    (:zinc.core/Numericalentailment
+     :zinc.core/Implication) (numericalentailment-elimination message node)
+    (:zinc.core/Andor 
+     :zinc.core/Disjunction 
+     :zinc.core/Xor
+     :zinc.core/Nand)  (andor-elimination message node)
+    (:zinc.core/Thresh
+     :zinc.core/Equivalence) (thresh-elimination message node)
     nil ;default
     ))
 
@@ -423,16 +423,16 @@
   [message node]
   (when debug (send screenprinter (fn [_]  (println "Inferring in:" node))))
   (case (csneps/type-of node)
-    :csneps.core/Negation (negation-introduction message node)
-    :csneps.core/Conjunction (conjunction-introduction message node)
-    (:csneps.core/Numericalentailment
-     :csneps.core/Implication) (numericalentailment-introduction message node)
-    (:csneps.core/Andor 
-     :csneps.core/Disjunction 
-     :csneps.core/Xor
-     :csneps.core/Nand
-     :csneps.core/Thresh
-     :csneps.core/Equivalence)  (param2op-introduction message node)
+    :zinc.core/Negation (negation-introduction message node)
+    :zinc.core/Conjunction (conjunction-introduction message node)
+    (:zinc.core/Numericalentailment
+     :zinc.core/Implication) (numericalentailment-introduction message node)
+    (:zinc.core/Andor 
+     :zinc.core/Disjunction 
+     :zinc.core/Xor
+     :zinc.core/Nand
+     :zinc.core/Thresh
+     :zinc.core/Equivalence)  (param2op-introduction message node)
     nil))
 
 (defn derivative-i-message

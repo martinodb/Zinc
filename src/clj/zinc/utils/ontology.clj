@@ -1,30 +1,30 @@
-(ns csneps.utils.ontology
-  (:require [csneps.core.caseframes :as cf]
-            [csneps.core.relations :as slot]
+(ns zinc.utils.ontology
+  (:require [zinc.core.caseframes :as cf]
+            [zinc.core.relations :as slot]
             [clojure.set :as set]))
 
 (defn- anonclass?
   [term]
-  (or (= (@csneps.core/caseframe term) (cf/find-frame 'ObjectSomeValuesFrom))
-      (= (@csneps.core/caseframe term) (cf/find-frame 'ObjectAllValuesFrom))
-      (= (@csneps.core/caseframe term) (cf/find-frame 'ObjectHasValue))))
+  (or (= (@zinc.core/caseframe term) (cf/find-frame 'ObjectSomeValuesFrom))
+      (= (@zinc.core/caseframe term) (cf/find-frame 'ObjectAllValuesFrom))
+      (= (@zinc.core/caseframe term) (cf/find-frame 'ObjectHasValue))))
 
 (defn- supertype-of
   [term]
-  (let [ucs (@csneps.core/up-cablesetw term)
+  (let [ucs (@zinc.core/up-cablesetw term)
         wfts (when (get ucs (slot/find-slot 'subClassExpression))
                @(get ucs (slot/find-slot 'subClassExpression))) 
-        supertypes (apply set/union (map #(second (@csneps.core/down-cableset %)) wfts))
+        supertypes (apply set/union (map #(second (@zinc.core/down-cableset %)) wfts))
         supertypes (remove anonclass? supertypes)
         supertype (first supertypes)];; Assume single inheritance
     supertype))
 
 (defn- subtypes-of
   [term]
-  (let [ucs (@csneps.core/up-cablesetw term)
+  (let [ucs (@zinc.core/up-cablesetw term)
         wfts (when (get ucs (slot/find-slot 'superClassExpression))
                @(get ucs (slot/find-slot 'superClassExpression))) 
-        subtypes (apply set/union (map #(first (@csneps.core/down-cableset %)) wfts))
+        subtypes (apply set/union (map #(first (@zinc.core/down-cableset %)) wfts))
         subtypes (remove anonclass? subtypes)]
     subtypes))
 
@@ -50,8 +50,8 @@
 (defn- get-roots
   "A root is a concrete term which is a supertype, but not a subtype."
   [frame-terms]
-  (let [subtypes (apply set/union (map #(first (@csneps.core/down-cableset %)) frame-terms))
-        supertypes (apply set/union (map #(second (@csneps.core/down-cableset %)) frame-terms))
+  (let [subtypes (apply set/union (map #(first (@zinc.core/down-cableset %)) frame-terms))
+        supertypes (apply set/union (map #(second (@zinc.core/down-cableset %)) frame-terms))
         roots (set/difference supertypes subtypes)]
     (remove anonclass? roots)))
 
@@ -64,7 +64,7 @@
     (let [subclassframe (cf/find-frame 'SubClassOf)
           frame-terms @(:terms subclassframe)
           roots (get-roots frame-terms)
-          terms (apply set/union (map #(apply set/union (@csneps.core/down-cableset %)) frame-terms))
+          terms (apply set/union (map #(apply set/union (@zinc.core/down-cableset %)) frame-terms))
           terms (remove anonclass? terms)
           terms (remove defined? terms)
           dist-term-map (apply merge-with concat (map #(hash-map (dist-to-root %) [%]) terms))

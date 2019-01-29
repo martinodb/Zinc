@@ -1,14 +1,14 @@
-(ns csneps.test.mapper-benchmark
-  (:require [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.printer :as print]
-            [csneps.core.relations :as slot]
-            [csneps.core :as csneps]
-            [csneps.core.build :as build]
-            [csneps.snip :as snip]
+(ns zinc.test.mapper-benchmark
+  (:require [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.printer :as print]
+            [zinc.core.relations :as slot]
+            [zinc.core :as csneps]
+            [zinc.core.build :as build]
+            [zinc.snip :as snip]
             [clojure.set :as set]
             [clojure.string :as str]
-            [csneps.core.snuser :as snuser]))
+            [zinc.core.snuser :as snuser]))
 
 (declare sneps3kbtocsneps semtypesToObjLang)
 
@@ -83,13 +83,13 @@
 (defn sneps3kbtocsneps
   [filename]
   (let [filestr (-> (slurp filename)
-                  (str/replace "ct:assert" "csneps.core.snuser/assert")
+                  (str/replace "ct:assert" "zinc.core.snuser/assert")
                   (str/replace " 'DefaultCT :origintag :hyp" "")
                   (str/replace "|" "\"")
                   (str/replace "\"\"\"" "\"\\\"\"")
                   (str/replace "(load" "(comment")
-                  (str/replace #"\(csneps.core.snuser/assert '\(Message.*?\)\)" "") ;; Not using the message assertion, lets ignore it since it has weird parsing requirements.
-                  (str/replace #"\(csneps.core.snuser/assert '\(SyntacticCategoryOf POS.*?\)\)" "")
+                  (str/replace #"\(zinc.core.snuser/assert '\(Message.*?\)\)" "") ;; Not using the message assertion, lets ignore it since it has weird parsing requirements.
+                  (str/replace #"\(zinc.core.snuser/assert '\(SyntacticCategoryOf POS.*?\)\)" "")
                   (str/replace "(in-package :snuser)" "(in-ns 'csneos.core.snuser)")
                   (str/replace "Action" "Action1"))
         typestrings (re-seq #"\(Type\s\S+\s\S+?\)" filestr)

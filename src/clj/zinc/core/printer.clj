@@ -3,15 +3,15 @@
 ;;; Author: Daniel R. Schlegel
 ;;; Modified: 6/10/2014
 
-(ns csneps.core.printer
+(ns zinc.core.printer
   (:require [clojure.string :as str]
-            [csneps.core.contexts :as ct]
-            [csneps.core :as csneps]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.relations :as slot])
-  (:use [csneps.core :only (type-of)]
+            [zinc.core.contexts :as ct]
+            [zinc.core :as csneps]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.relations :as slot])
+  (:use [zinc.core :only (type-of)]
         [clojure.pprint :only (cl-format pprint)]
-        [csneps.util]
+        [zinc.util]
         [clojure.java.io]))
 
 (def ^{:dynamic true} PRINTED-VARIABLES (hash-set))
@@ -102,9 +102,9 @@
         (set! PRINTED-VARIABLES (conj PRINTED-VARIABLES term))
         (str 
           (condp = (type-of term)
-            :csneps.core/Arbitrary (str "(every " var-label " ")
-            :csneps.core/Indefinite (str "(some " var-label " (" (print-ind-deps term) ") ")
-            :csneps.core/QueryVariable (str "(" var-label " "))
+            :zinc.core/Arbitrary (str "(every " var-label " ")
+            :zinc.core/Indefinite (str "(some " var-label " (" (print-ind-deps term) ") ")
+            :zinc.core/QueryVariable (str "(" var-label " "))
           (print-set (@csneps/restriction-set term) false)
           (when (seq @(:not-same-as term))
             (str " (notSame " var-label " " (print-set @(:not-same-as term) false) ")"))
@@ -133,38 +133,38 @@
   [term]
   ;(println "Printing term: " term)
   (condp = (type-of term)
-    :csneps.core/CARule
+    :zinc.core/CARule
       (print-carule term)
-    :csneps.core/Closure
+    :zinc.core/Closure
       (print-closure term)
-    :csneps.core/Negation
+    :zinc.core/Negation
       (print-negation (first (@csneps/down-cableset term)))
-    :csneps.core/Negationbyfailure
+    :zinc.core/Negationbyfailure
       (print-negationbyfailure (first (@csneps/down-cableset term)))
-    :csneps.core/Conjunction
+    :zinc.core/Conjunction
       (print-nary 'and (first (@csneps/down-cableset term)))
-    :csneps.core/Disjunction
+    :zinc.core/Disjunction
       (print-nary 'or (first (@csneps/down-cableset term)))
-    :csneps.core/Equivalence
+    :zinc.core/Equivalence
       (print-nary 'iff (first (@csneps/down-cableset term)))
-    :csneps.core/Xor
+    :zinc.core/Xor
       (print-nary 'xor (first (@csneps/down-cableset term)))
-    :csneps.core/Nand
+    :zinc.core/Nand
       (print-nary 'nand (first (@csneps/down-cableset term)))
-    :csneps.core/Andor
+    :zinc.core/Andor
       (print-param2op 'andor (:min term) (:max term) (first (@csneps/down-cableset term)))
-    :csneps.core/Thresh
+    :zinc.core/Thresh
       (print-param2op 'thresh (:min term) (:max term) (first (@csneps/down-cableset term)))
-    :csneps.core/Implication
+    :zinc.core/Implication
       (print-str (list 'if (print-term (first (@csneps/down-cableset term))) (print-term (second (@csneps/down-cableset term)))))
-    :csneps.core/Numericalentailment
+    :zinc.core/Numericalentailment
       (print-str (list (symbol (str "=" (if (= (:min term) 1) 'v (:min term)) ">"))
                        (print-term (first (@csneps/down-cableset term))) (print-term (second (@csneps/down-cableset term)))))
-    :csneps.core/Arbitrary
+    :zinc.core/Arbitrary
       (print-unnamed-variable-term term)
-    :csneps.core/Indefinite
+    :zinc.core/Indefinite
       (print-unnamed-variable-term term)
-    :csneps.core/QueryVariable
+    :zinc.core/QueryVariable
       (print-unnamed-variable-term term)
     (print-molecular (@csneps/caseframe term) (@csneps/down-cableset term))
     ))
@@ -172,8 +172,8 @@
 (defn sneps-printer
   [x]
   (condp = (type x)
-    csneps.core.Atom (print-atom x *out*)
-    csneps.core.Categorization (print-molecular x *out*)
+    zinc.core.Atom (print-atom x *out*)
+    zinc.core.Categorization (print-molecular x *out*)
     (pprint x *out*)))
 
 ;(defn print-named-molecular-term
@@ -191,7 +191,7 @@
   (str (:name term) ": " (print-unnamed-variable-term term)))
 
 
-;(defmethod print-method csneps.core.Categorization [o w]
+;(defmethod print-method zinc.core.Categorization [o w]
 ;  (print-named-molecular-term o w))
 
 (defn print-set
@@ -207,7 +207,7 @@
   ;(println "Term: " term)
   (condp = (type-of term)
     clojure.lang.PersistentHashSet (print-set term true)
-    :csneps.core/Atom (print-atom term)
+    :zinc.core/Atom (print-atom term)
     (print-unnamed-molecular-term term)))
 
 (defn term-printer
@@ -216,10 +216,10 @@
             PRINTED-VARIABLE-LABELS (hash-map)]
   (cond
     ;; Variable
-    (isa? (csneps.core/syntactic-type-of term) :csneps.core/Variable)
+    (isa? (zinc.core/syntactic-type-of term) :zinc.core/Variable)
     (print-str (print-named-variable-term term))
     ;; Molecular
-    (isa? (csneps.core/syntactic-type-of term) :csneps.core/Molecular)
+    (isa? (zinc.core/syntactic-type-of term) :zinc.core/Molecular)
     (print-str (wft-string term) (print-term term))
     ;; Term Set
     (set? term)
@@ -227,19 +227,19 @@
     :else
     (str (print-atom term)
       (if
-        (and (= (csneps.core/semantic-type-of term) :Proposition)
+        (and (= (zinc.core/semantic-type-of term) :Proposition)
 	     (ct/asserted? term (ct/currentContext)))
         "!" "")))))
 
 (defn sneps-printer
   [object]
-  (if (isa? (csneps.core/syntactic-type-of object) :csneps.core/Term)
+  (if (isa? (zinc.core/syntactic-type-of object) :zinc.core/Term)
     (pprint (term-printer object))
     (pprint object)))
 
 (defn sneps-printer-str
   [object]
-  (if (isa? (csneps.core/syntactic-type-of object) :csneps.core/Term)
+  (if (isa? (zinc.core/syntactic-type-of object) :zinc.core/Term)
     (with-out-str (pprint (term-printer object)))
     (with-out-str (pprint object))))
 
@@ -265,85 +265,85 @@
     (into {} (map
       (fn [[k v]]
         [
-         (if (isa? (csneps.core/syntactic-type-of k) :csneps.core/Variable)
+         (if (isa? (zinc.core/syntactic-type-of k) :zinc.core/Variable)
            (print-atom k)
            (sexpr-printer k))
-         (if (isa? (csneps.core/syntactic-type-of v) :csneps.core/Variable)
+         (if (isa? (zinc.core/syntactic-type-of v) :zinc.core/Variable)
            (print-atom v)
            (sexpr-printer v))
          ]) m))))
 
 ;;; Print-method functions
-(defmethod print-method csneps.core.Term [o w]
+(defmethod print-method zinc.core.Term [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Atom [o w]
+(defmethod print-method zinc.core.Atom [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Base [o w]
+(defmethod print-method zinc.core.Base [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Variable [o w]
+(defmethod print-method zinc.core.Variable [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Arbitrary [o w]
+(defmethod print-method zinc.core.Arbitrary [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Indefinite [o w]
+(defmethod print-method zinc.core.Indefinite [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.QueryVariable [o w]
+(defmethod print-method zinc.core.QueryVariable [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Molecular [o w]
+(defmethod print-method zinc.core.Molecular [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Closure [o w]
+(defmethod print-method zinc.core.Closure [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Carule [o w]
+(defmethod print-method zinc.core.Carule [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Param2op [o w]
+(defmethod print-method zinc.core.Param2op [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Andor [o w]
+(defmethod print-method zinc.core.Andor [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Disjunction [o w]
+(defmethod print-method zinc.core.Disjunction [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Xor [o w]
+(defmethod print-method zinc.core.Xor [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Nand [o w]
+(defmethod print-method zinc.core.Nand [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Thresh [o w]
+(defmethod print-method zinc.core.Thresh [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Equivalence [o w]
+(defmethod print-method zinc.core.Equivalence [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Conjunction [o w]
+(defmethod print-method zinc.core.Conjunction [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Negation [o w]
+(defmethod print-method zinc.core.Negation [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Negationbyfailure [o w]
+(defmethod print-method zinc.core.Negationbyfailure [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Numericalentailment [o w]
+(defmethod print-method zinc.core.Numericalentailment [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Orentailment [o w]
+(defmethod print-method zinc.core.Orentailment [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Implication [o w]
+(defmethod print-method zinc.core.Implication [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
-(defmethod print-method csneps.core.Categorization [o w]
+(defmethod print-method zinc.core.Categorization [o w]
   (.write ^java.io.Writer w (str (term-printer o))))
 
 
@@ -365,11 +365,11 @@
     (.write w (str ";;; " (.toString (new java.util.Date)) "\n"))
     (when headerfile 
       (.write ^java.io.Writer w "(clojure.lang.Compiler/loadFile " (first headerfile) ")\n"))
-    (.write w ";;; Assumes that all required Contexts, Types, Slots, and Caseframes have now been loaded.\n(in-ns 'csneps.core.snuser)\n")
+    (.write w ";;; Assumes that all required Contexts, Types, Slots, and Caseframes have now been loaded.\n(in-ns 'zinc.core.snuser)\n")
     (doseq [term (vals @csneps/TERMS)]
       (when (ct/asserted? term (ct/currentContext))
-        (.write w  "(csneps.core.build/assert '")
-        (if (= (:type term) :csneps.core/Atom)
+        (.write w  "(zinc.core.build/assert '")
+        (if (= (:type term) :zinc.core/Atom)
           (.write w (str (print-atom term)))
           (binding [PRINTED-VARIABLES (hash-set)
                     PRINTED-VARIABLE-LABELS (hash-map)]

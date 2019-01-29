@@ -1,12 +1,12 @@
-(ns csneps.test.benchmark
-  (:require [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.relations :as slot]
-            [csneps.core :as csneps]
-            [csneps.core.build :as build]
-            [csneps.snip :as snip]
+(ns zinc.test.benchmark
+  (:require [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.relations :as slot]
+            [zinc.core :as csneps]
+            [zinc.core.build :as build]
+            [zinc.snip :as snip]
             [clojure.set :as set]
-            [csneps.core.snuser :as snuser]))
+            [zinc.core.snuser :as snuser]))
 
 (def ^:dynamic start-time nil)
 (def ^:dynamic end-time nil)

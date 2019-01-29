@@ -1,6 +1,6 @@
-(ns csneps.debug
+(ns zinc.debug
   (:require [clojure.set :as set])
-  (:use [csneps.core]))
+  (:use [zinc.core]))
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Debug Tools ;;;

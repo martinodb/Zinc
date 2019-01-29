@@ -1,7 +1,7 @@
-(ns csneps.core.find-utils
-  (:use [csneps.core]
-        [csneps.util])
-  (:require [csneps.core.relations :as slot]
+(ns zinc.core.find-utils
+  (:use [zinc.core]
+        [zinc.util])
+  (:require [zinc.core.relations :as slot]
             [clojure.test :refer [is]]))
 
 (defn findto
@@ -11,7 +11,7 @@
   (let [rel (if (symbol? r)
               (slot/find-slot r)
               r)]
-    (when (isa? (type-of n) :csneps.core/Molecular)
+    (when (isa? (type-of n) :zinc.core/Molecular)
       (let [pos (first (positions #{rel} (:slots (@caseframe n))))]
         (if pos
           (nth (seq (@down-cableset n)) pos)
@@ -22,5 +22,5 @@
         from which a slot r, or a slot named r, goes to m."
   [m r]
   {:pre [(is (term? m) "m is not a term.")]}
-  (let [res (get (@up-cablesetw m) (if (= (type r) csneps.core.relations.Slot) r (slot/find-slot r)))]
+  (let [res (get (@up-cablesetw m) (if (= (type r) zinc.core.relations.Slot) r (slot/find-slot r)))]
     (if res @res (hash-set))))

@@ -1,8 +1,8 @@
-(ns csneps.core.arithmetic
-  (:require [csneps.core.build :as build])
+(ns zinc.core.arithmetic
+  (:require [zinc.core.build :as build])
   (:refer-clojure :exclude [+ - * / < <= > >= == not=])
-  (:use [csneps.core :only (term?)]
-        [csneps.util]))
+  (:use [zinc.core :only (term?)]
+        [zinc.util]))
 
 (defn box
   "Returns a term whose name looks like n."

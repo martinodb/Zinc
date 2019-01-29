@@ -1,6 +1,6 @@
 ; Originally based on the ACL SNePS 3 implementation by Dr. Stuart C. Shapiro.
 
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (declare structurally-subsumes-varterm parse-vars-and-rsts check-and-build-variables notsames pre-build-vars build-vars build-quantterm-channels)
 
@@ -8,12 +8,12 @@
   ([term subst]
     (apply-sub-to-term term subst nil))
   ([term subst ignore-type]
-    (if (or (= (:type term) :csneps.core/Atom)
+    (if (or (= (:type term) :zinc.core/Atom)
             (= subst {}))
       term
-      (binding [csneps.core.printer/PRINTED-VARIABLES (hash-set)
-                csneps.core.printer/PRINTED-VARIABLE-LABELS (hash-map)]
-        (let [expr (read-string (csneps.core.printer/print-unnamed-molecular-term term))
+      (binding [zinc.core.printer/PRINTED-VARIABLES (hash-set)
+                zinc.core.printer/PRINTED-VARIABLE-LABELS (hash-map)]
+        (let [expr (read-string (zinc.core.printer/print-unnamed-molecular-term term))
               [new-expr arb-rsts ind-dep-rsts qvar-rsts] (dosync (parse-vars-and-rsts expr {} {} {}))
               [new-expr built-vars substitution] (dosync (check-and-build-variables expr :reuse-inds true))
               ;; expr is something like: (Carries (every x (Owns x (every y (Isa y Dog))) (Isa x Person)) y)

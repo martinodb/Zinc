@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (declare msgs-to-promote print-ptree)
 
@@ -182,10 +182,10 @@
 (defn make-ptree
   [syntype fillers]
   (let [ants (condp = syntype
-               :csneps.core/Conjunction (first fillers)
-               :csneps.core/Implication (first fillers)
-               :csneps.core/Arbitrary fillers ;; really the restrictions.
-               :csneps.core/Numericalentailment (first fillers));; Only and-entailment!
+               :zinc.core/Conjunction (first fillers)
+               :zinc.core/Implication (first fillers)
+               :zinc.core/Arbitrary fillers ;; really the restrictions.
+               :zinc.core/Numericalentailment (first fillers));; Only and-entailment!
         var-pat-map (apply merge-with merge-var-term (map var-pat-map ants))
         adj-pat-seq (adjacent-pat-seq ants var-pat-map)
         [ptree tpmap] (pat-seq-to-ptree adj-pat-seq ants)]
@@ -204,7 +204,7 @@
                               (G y z)
                               (H x w))
                         (ct/currentContext))]
-    (make-ptree :csneps.core/Conjunction (@down-cableset a))))
+    (make-ptree :zinc.core/Conjunction (@down-cableset a))))
 
 (defn- get-root
   [ptree]

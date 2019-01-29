@@ -24,7 +24,7 @@
 ;;; 
 ;;; Contributor(s): ______________________________________.
 
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (declare covers valid-adjust)
 
@@ -32,12 +32,12 @@
   (fn [source target] [(syntactic-type-of source) (syntactic-type-of target)]))
 
 ;;; Slot-based entailment never applies to an atom and anything
-(defmethod slot-based-entails [:csneps.core/Atom :csneps.core/Molecular] [source target])
-(defmethod slot-based-entails [:csneps.core/Molecular :csneps.core/Atom] [source target])
-(defmethod slot-based-entails [:csneps.core/Atom :csneps.core/Atom] [source target])
+(defmethod slot-based-entails [:zinc.core/Atom :zinc.core/Molecular] [source target])
+(defmethod slot-based-entails [:zinc.core/Molecular :zinc.core/Atom] [source target])
+(defmethod slot-based-entails [:zinc.core/Atom :zinc.core/Atom] [source target])
 
 (defmethod slot-based-entails 
-  [:csneps.core/Negation :csneps.core/Nand] [source target]
+  [:zinc.core/Negation :zinc.core/Nand] [source target]
   ;; nor -> nand
   ;; (nor (and P Q) R) |= (nand P Q)
   ;; if any of the source's fillers is a conjunction X s.t. 
@@ -47,7 +47,7 @@
     [args (find-utils/findto source 'nor)]
     (let [arg (first args)]
       (cond 
-        (and (= (syntactic-type-of arg) :csneps.core/Conjunction)
+        (and (= (syntactic-type-of arg) :zinc.core/Conjunction)
                (subset? (find-utils/findto arg 'and) (find-utils/findto target 'andorargs)))
         target
         (nil? (rest args))
@@ -56,7 +56,7 @@
         (recur (rest args))))))
 
 (defmethod slot-based-entails 
-  [:csneps.core/Implication :csneps.core/Implication] [source target]
+  [:zinc.core/Implication :zinc.core/Implication] [source target]
   (let [src-ant (nth (@down-cableset source) 0)
         src-cq  (nth (@down-cableset target) 1)
         tgt-ant (nth (@down-cableset source) 0)
@@ -65,7 +65,7 @@
       target)))
 
 (defmethod slot-based-entails 
-  [:csneps.core/Andor :csneps.core/Andor] [source target]
+  [:zinc.core/Andor :zinc.core/Andor] [source target]
   (let [i       (:min source)
         j       (:max source)
         src-set (nth (@down-cableset source) 0)
@@ -82,7 +82,7 @@
       target)))
 
 (defmethod slot-based-entails 
-  [:csneps.core/Thresh :csneps.core/Thresh] [source target]
+  [:zinc.core/Thresh :zinc.core/Thresh] [source target]
   (let [i       (:min source)
         j       (:max source)
         src-set (nth (@down-cableset source) 0)
@@ -99,7 +99,7 @@
       target)))
 
 (defmethod slot-based-entails 
-  [:csneps.core/Negation :csneps.core/Negation] [negsource negtarget]
+  [:zinc.core/Negation :zinc.core/Negation] [negsource negtarget]
   (when (not= negsource negtarget)
     (let [sourceset (find-utils/findto negsource 'nor)
           targetset (find-utils/findto negtarget 'nor)]
@@ -109,8 +109,8 @@
               target (first targetset)]
           ;; If source and target are molecular, and have compatible frames
 	        ;; TODO:     should this "adjustable" check be eliminated?
-          (if (and (isa? (syntactic-type-of target) :csneps.core/Molecular)
-                   (isa? (syntactic-type-of source) :csneps.core/Molecular)
+          (if (and (isa? (syntactic-type-of target) :zinc.core/Molecular)
+                   (isa? (syntactic-type-of source) :zinc.core/Molecular)
                    (cf/adjustable? (@caseframe source) (@caseframe target)))
             ;; Return targetset if the fillers of every source slot can 
 		        ;;     be validly adjusted to the fillers of the corresponding target slot
@@ -127,7 +127,7 @@
         (when (covers sourceset targetset) targetset)))))
 
 (defmethod slot-based-entails 
-  [:csneps.core/Molecular :csneps.core/Molecular] [source target]
+  [:zinc.core/Molecular :zinc.core/Molecular] [source target]
   ;(println "Here" (cf/adjustable? (:caseframe source) (:caseframe target)))
   (when (and (cf/adjustable? (@caseframe source) (@caseframe target))
              (every? 
@@ -186,7 +186,7 @@
      The termstack is a stack of propositions
          that this goal is a subgoal of."
   [target context termstack]
-  (if (isa? (type-of target) :csneps.core/Molecular) 
+  (if (isa? (type-of target) :zinc.core/Molecular) 
     (do 
 	    ;;Look at the terms stored in the target's caseframe
 	    (when @goaltrace

@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (declare lattice-insert submit-assertion-to-channels build-quantterm-channels adjustType whquestion-term?)
 
@@ -16,7 +16,7 @@
         (when-not (whquestion-term? rst) ;; It doesn't make sense to assert a WhQuestion.
           (assert rst (ct/find-context 'OntologyCT))))
       (build-quantterm-channels v))
-      ;(when (= (syntactic-type-of v) :csneps.core/Arbitrary) (lattice-insert v)))
+      ;(when (= (syntactic-type-of v) :zinc.core/Arbitrary) (lattice-insert v)))
     (build new-expr type substitution properties)))
 
 (defn build-variable 
@@ -82,7 +82,7 @@
   [expr context]
   (clojure.core/assert (not (whquestion-term? expr)) "Cannot assert a WhQuestion.")
   
-  (let [ct (csneps.core.contexts/find-context context)]
+  (let [ct (zinc.core.contexts/find-context context)]
     (when-not (ct/asserted? expr ct)
       (ct/hypothesize expr ct)
       (adjustType expr (semantic-type-of expr) :Proposition)
@@ -92,9 +92,9 @@
 
 (defmethod assert
   ;[:Proposition] [expr context origintag]
-  [:csneps.core/Term] [expr context]
+  [:zinc.core/Term] [expr context]
   (clojure.core/assert (not (whquestion-term? expr)) "Cannot assert a WhQuestion.")
-  (let [ct (csneps.core.contexts/find-context context)]
+  (let [ct (zinc.core.contexts/find-context context)]
     (when-not (ct/asserted? expr ct)
       (ct/hypothesize expr ct)
       (adjustType expr (semantic-type-of expr) :Proposition)

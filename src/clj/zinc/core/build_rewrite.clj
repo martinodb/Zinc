@@ -1,6 +1,6 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
-;;; This portion of csneps.core.build contains several
+;;; This portion of zinc.core.build contains several
 ;;; rewrite rules. 
 
 (defn add-rewrite

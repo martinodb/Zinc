@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (declare find find-in find-helper)
 
@@ -107,7 +107,7 @@
       (and (cl-seqable? (first arg))
            (not (record? (first arg)))) (contains-new-term-or-cf? (first arg) var-list)
       (not (or (var-list (first arg))
-               (= (syntactic-type-of (first arg)) :csneps.core/Term)
+               (= (syntactic-type-of (first arg)) :zinc.core/Term)
                (get-term (first arg))))
                           true
       :else               (recur (rest arg)))))

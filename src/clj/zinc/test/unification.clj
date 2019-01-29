@@ -1,18 +1,18 @@
-(ns csneps.test.unification
-  (:use [csneps.core.build])
-  (:require [csneps.core.snuser]))
+(ns zinc.test.unification
+  (:use [zinc.core.build])
+  (:require [zinc.core.snuser]))
 
 (defn basicunif-test []
-  (addTermToUnificationTree (csneps.core.snuser/assert '(Isa (every x) Animal)))
-  (getUnifiers (csneps.core.snuser/defineTerm '(Isa Glacier Animal))))
+  (addTermToUnificationTree (zinc.core.snuser/assert '(Isa (every x) Animal)))
+  (getUnifiers (zinc.core.snuser/defineTerm '(Isa Glacier Animal))))
 
 (defn fullunif-test []
-  (csneps.core.snuser/clearkb true)
-  (csneps.core.snuser/defineSlot entity :type Entity :docstring "General slot for holding entities.")
-  (csneps.core.snuser/defineSlot entity1 :type Entity :docstring "General slot for holding entities.")
-  (csneps.core.snuser/defineSlot entity2 :type Entity :docstring "General slot for holding entities.")
-  (csneps.core.snuser/defineCaseframe 'Proposition '('SameSpecies entity entity1 entity2))
-  (csneps.core.snuser/defineCaseframe 'Proposition '('caregiver entity1))
-  (csneps.core.snuser/defineCaseframe 'Proposition '('friend entity2))
-  (addTermToUnificationTree (csneps.core.snuser/assert '(SameSpecies (caregiver (every x)) (friend (caregiver (every w))) w)))
-  (getUnifiers (csneps.core.snuser/defineTerm '(SameSpecies (every x) (friend x) Alex))))
+  (zinc.core.snuser/clearkb true)
+  (zinc.core.snuser/defineSlot entity :type Entity :docstring "General slot for holding entities.")
+  (zinc.core.snuser/defineSlot entity1 :type Entity :docstring "General slot for holding entities.")
+  (zinc.core.snuser/defineSlot entity2 :type Entity :docstring "General slot for holding entities.")
+  (zinc.core.snuser/defineCaseframe 'Proposition '('SameSpecies entity entity1 entity2))
+  (zinc.core.snuser/defineCaseframe 'Proposition '('caregiver entity1))
+  (zinc.core.snuser/defineCaseframe 'Proposition '('friend entity2))
+  (addTermToUnificationTree (zinc.core.snuser/assert '(SameSpecies (caregiver (every x)) (friend (caregiver (every w))) w)))
+  (getUnifiers (zinc.core.snuser/defineTerm '(SameSpecies (every x) (friend x) Alex))))

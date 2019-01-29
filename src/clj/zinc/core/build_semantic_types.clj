@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (defn- define-type*
   "Defines a new semantic type in the semantic type hierarchy. Only to be used during

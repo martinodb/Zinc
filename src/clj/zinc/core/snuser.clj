@@ -1,14 +1,14 @@
 ;(set! *warn-on-reflection* true)
 
-(ns csneps.core.snuser
-  (:require [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.relations :as slot]
-            [csneps.core :as csneps]
-            [csneps.core.build :as build]
-            [csneps.snip :as snip]
-            [csneps.gui :as gui]
-            [csneps.utils.ontology :as onto-tools]
+(ns zinc.core.snuser
+  (:require [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.relations :as slot]
+            [zinc.core :as csneps]
+            [zinc.core.build :as build]
+            [zinc.snip :as snip]
+            [zinc.gui :as gui]
+            [zinc.utils.ontology :as onto-tools]
             [clojure.tools.cli :refer [parse-opts]]
             [reply.main])
   (:use clojure.stacktrace)
@@ -16,29 +16,29 @@
   (:use [clojure.pprint :only (cl-format)]
         [clojure.core.memoize :only (memo-clear!)]
         [clojure.walk]
-        [csneps.core.caseframes :only (list-caseframes sameFrame description)]
-        [csneps.demo :only (demo)]
+        [zinc.core.caseframes :only (list-caseframes sameFrame description)]
+        [zinc.demo :only (demo)]
         [clojure.set :only (union difference)]
-        [csneps.core.relations :only (list-slots)]
-        [csneps.core.contexts :only (currentContext defineContext listContexts setCurrentContext remove-from-context)]
+        [zinc.core.relations :only (list-slots)]
+        [zinc.core.contexts :only (currentContext defineContext listContexts setCurrentContext remove-from-context)]
         
-        ;[csneps.core.build :only (find *PRECISION* defrule unassert rewrite-propositional-expr)]
-        [csneps.core.build :only (find *PRECISION* defrule rewrite-propositional-expr)] ; remove 'unassert'.
+        ;[zinc.core.build :only (find *PRECISION* defrule unassert rewrite-propositional-expr)]
+        [zinc.core.build :only (find *PRECISION* defrule rewrite-propositional-expr)] ; remove 'unassert'.
         
-        [csneps.core :only (showTypes list-types semantic-type-of)]
-        [csneps.core.printer :only (writeKBToTextFile)]
-        [csneps.snip :only (definePath pathsfrom cancel-infer-of cancel-infer-from cancel-focused-infer adopt unadopt attach-primaction ig-debug-all)]
-        [csneps.core.arithmetic]
-        [csneps.util]
-        [csneps.debug :only (debug set-debug-nodes set-debug-features)])
-  (:import [edu.buffalo.csneps.util CountingLatch]))
+        [zinc.core :only (showTypes list-types semantic-type-of)]
+        [zinc.core.printer :only (writeKBToTextFile)]
+        [zinc.snip :only (definePath pathsfrom cancel-infer-of cancel-infer-from cancel-focused-infer adopt unadopt attach-primaction ig-debug-all)]
+        [zinc.core.arithmetic]
+        [zinc.util]
+        [zinc.debug :only (debug set-debug-nodes set-debug-features)])
+  (:import [edu.buffalo.zinc.util CountingLatch]))
 
 (declare askif askifnot defineTerm find-term             clearkb          )
 
 (defn adopt-rule
   "Adopts the rule with the symbol rule-name as its name."
   [rule-name]
-  (let [rules (filter #(isa? (csneps/syntactic-type-of %) :csneps.core/CARule) (vals @csneps/TERMS))
+  (let [rules (filter #(isa? (csneps/syntactic-type-of %) :zinc.core/CARule) (vals @csneps/TERMS))
         rule (filter #(= rule-name (:name (ffirst (@csneps/down-cableset %)))) rules)]
     (if (first rule)
       (when-let [taskid (adopt (first rule))]
@@ -225,7 +225,7 @@
   ;; Then print molecular terms;
   [& {:keys [asserted types originsets properties ontology]}]
   (let [terms (vals @csneps/TERMS)
-        atoms (sort-by :name (filter #(= (:type %) :csneps.core/Atom) terms))
+        atoms (sort-by :name (filter #(= (:type %) :zinc.core/Atom) terms))
         arbs (sort-by :name (filter csneps/arbitraryTerm? terms))
         inds (sort-by :name (filter csneps/indefiniteTerm? terms))
         qvars (sort-by :name (filter csneps/queryTerm? terms))
@@ -277,7 +277,7 @@
 (defn quit
   []
   (shutdown-agents)
-  (csneps.snip/shutdownExecutor)
+  (zinc.snip/shutdownExecutor)
   (System/exit 0))
 
 (defn exit [] (quit))
@@ -307,6 +307,6 @@
       ;(System/exit 0))
     ;(clearkb true)
     ;(if (:cli options)
-      ;(reply.main/launch {:custom-eval '(in-ns 'csneps.core.snuser)})
+      ;(reply.main/launch {:custom-eval '(in-ns 'zinc.core.snuser)})
       ;(gui/startGUI))))
 

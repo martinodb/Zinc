@@ -1,7 +1,7 @@
-(ns csneps.loader
-  (:require [csneps.core.printer]
-            [csneps.gui])
-  (:use [csneps.util]))
+(ns zinc.loader
+  (:require [zinc.core.printer]
+            [zinc.gui])
+  (:use [zinc.util]))
 
 ;; Load the util namespace
 (load "util")
@@ -31,7 +31,7 @@
 ;; Initialize the system.
 ;(load "initialize")
 
-(csneps.core.snuser/clearkb true)
+(zinc.core.snuser/clearkb true)
 
 
 (defn loadsneps3 []

@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 ;;; An S-Index is a map from substitution to a RUI. 
 ;;; Preconditions for use:

@@ -1,4 +1,4 @@
-(ns csneps.util
+(ns zinc.util
   (:use [clojure.string :only (join)]
         [clojure.pprint])
   (:require [clojure.set :as set])
@@ -386,7 +386,7 @@
             (second clauses)
             (throw (IllegalArgumentException.
                      "setCond requires an even number of forms")))
-          (cons 'csneps.util/setCond (next (next clauses))))))
+          (cons 'zinc.util/setCond (next (next clauses))))))
          
 (defn cons?
   [expr]

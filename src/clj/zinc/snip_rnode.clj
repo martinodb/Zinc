@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (defrecord2 rnode
   [term         nil

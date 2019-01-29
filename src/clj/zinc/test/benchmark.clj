@@ -1,13 +1,13 @@
-(ns csneps.test.benchmark
-  (:require [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.printer :as print]
-            [csneps.core.relations :as slot]
-            [csneps.core :as csneps]
-            [csneps.core.build :as build]
-            [csneps.snip :as snip]
+(ns zinc.test.benchmark
+  (:require [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.printer :as print]
+            [zinc.core.relations :as slot]
+            [zinc.core :as csneps]
+            [zinc.core.build :as build]
+            [zinc.snip :as snip]
             [clojure.set :as set]
-            [csneps.core.snuser :as snuser]))
+            [zinc.core.snuser :as snuser]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Time and Statistics Variables + Functions ;;;
@@ -25,7 +25,7 @@
   []
   (def runtime (atom 0))
   (def iterations-left (atom iterations))
-  ;(remove-watch csneps.snip/to-infer :to-infer)
+  ;(remove-watch zinc.snip/to-infer :to-infer)
   )
 
 (defn print-time

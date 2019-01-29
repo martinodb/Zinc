@@ -1,9 +1,9 @@
-(ns csneps.core
+(ns zinc.core
   (:require [clojure.pprint]
             [clojure.set]
             [clojure.string :as st])
-  (:use [csneps.util]))
+  (:use [zinc.util]))
 
-;; Load the rest of the csneps.core namespace.
+;; Load the rest of the zinc.core namespace.
 (load "core_syntactic_types")
 (load "core_semantic_types")

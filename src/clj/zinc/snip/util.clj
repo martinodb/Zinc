@@ -1,7 +1,7 @@
-(ns csneps.snip.util
-  (:require [csneps.core :as csneps]
-            [csneps.core.contexts :as ct]
-            [csneps.core.build :as build]
+(ns zinc.snip.util
+  (:require [zinc.core :as csneps]
+            [zinc.core.contexts :as ct]
+            [zinc.core.build :as build]
             [clojure.set :as set]))
 
 (defn variables-in

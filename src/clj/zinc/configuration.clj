@@ -1,4 +1,4 @@
-(ns csneps.configuration)
+(ns zinc.configuration)
 
 ;; Inference Graph Configuration
 (def ig-cpus-to-use (/ (.availableProcessors (Runtime/getRuntime)) 2))

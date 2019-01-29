@@ -26,7 +26,7 @@
 ;;; 
 ;;; Contributor(s): ______________________________________.
 
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (declare valve-state-changed submit-to-channels new-message create-message-structure get-sent-messages add-matched-and-sent-messages)
 
@@ -59,7 +59,7 @@
    switch-binds  nil
    filter-binds  nil])
 
-(defmethod print-method csneps.core.build.Channel [o w]
+(defmethod print-method zinc.core.build.Channel [o w]
   (.write ^java.io.Writer w 
     (str (print/term-printer (:originator o)) " -(" (count @(:waiting-msgs o)) ")"
          (cond
@@ -150,7 +150,7 @@
             (or (= type :i-channel)
                 (= type :g-channel))
             (not (variableTerm? orig))
-            (not= (syntactic-type-of orig) :csneps.core/Negation))
+            (not= (syntactic-type-of orig) :zinc.core/Negation))
       (submit-to-channel ch (new-message {:origin orig
                                           :support-set #{['hyp #{(:name orig)}]}
                                           :flaggedns {orig true}
@@ -160,7 +160,7 @@
     ;; Remmember, inner terms are built before outer terms, so to handle negations, they must come when the nor is
     ;; built. If orig is a nor, send a u-infer message to its arguments.
     (when (and (= type :u-channel)
-               (= (syntactic-type-of orig) :csneps.core/Negation))
+               (= (syntactic-type-of orig) :zinc.core/Negation))
       (let [new-msg (new-message {:origin orig, 
                                   :support-set #{['der #{(:name orig)}]}, 
                                   :type 'U-INFER, 

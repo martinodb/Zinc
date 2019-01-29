@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (load "snip_beliefrevision")
 (load "snip_message")
@@ -30,7 +30,7 @@
 ;; Incremented whenever a message is submitted, and decremented once inference
 ;; on a message is complete, this allows us to determine when the graph is in
 ;; a quiescent state.
-(def infer-status (ref {nil (edu.buffalo.csneps.util.CountingLatch.)}))
+(def infer-status (ref {nil (edu.buffalo.zinc.util.CountingLatch.)}))
 
 ;; Tasks have :priority metadata. This allows the queue to order them
 ;; properly for execution. Higher priority is executed first.
@@ -46,7 +46,7 @@
 ;; Priority Blocking Queue to handle the tasks.
 (def queue (PriorityBlockingQueue. 50 task-cmpr))
 
-;(def queue (edu.buffalo.csneps.util.BlockingLifoQueue.))
+;(def queue (edu.buffalo.zinc.util.BlockingLifoQueue.))
 
 ;(def queue (LinkedBlockingQueue.))
 
@@ -66,7 +66,7 @@
                          ig-cpus-to-use
                          (Long/MAX_VALUE) TimeUnit/NANOSECONDS queue))
   (.prestartAllCoreThreads ^ThreadPoolExecutor executorService)
-  (def infer-status (ref {nil (edu.buffalo.csneps.util.CountingLatch.)})))
+  (def infer-status (ref {nil (edu.buffalo.zinc.util.CountingLatch.)})))
 
 ;; Only used when exiting. 
 (defn shutdownExecutor
@@ -92,7 +92,7 @@
   (with-meta (apply partial f more) {:priority priority}))
 
 (defn submit-to-channel
-  [^csneps.core.build.Channel channel ^csneps.snip.Message message]
+  [^zinc.core.build.Channel channel ^zinc.snip.Message message]
   (print-debug :msgtx #{(:originator channel) (:destination channel)} (print-str "MSGTX: " message "\n -- on channel" channel))
   ;; Filter
   (print-debug :filter #{(:originator channel) (:destination channel)} (print-str "FILTER: " ((:filter-fn channel) (:subst message)) "\n -- in channel" channel))
@@ -119,7 +119,7 @@
 (defn blocking-submit-to-channel
   [ch msg]
   (let [taskid (gensym "task")]
-    (dosync (alter infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+    (dosync (alter infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
     (submit-to-channel ch (assoc msg :taskid taskid))
     (.await ^CountingLatch (@infer-status taskid))))
 
@@ -137,7 +137,7 @@
     (doall (map #(submit-to-channel % msg) (@i-channels term))))
   ;; Conjunctions:
   ;; Conjunctions have no antecedents if they are true, so the U-INFER messages must be passed on here
-  (when (= (type-of term) :csneps.core/Conjunction)
+  (when (= (type-of term) :zinc.core/Conjunction)
     (let [msg (new-message {:origin term, :support-set #{['der #{(:name term)}]}, :type 'U-INFER, :fwd-infer? fwd-infer})]
       (doall (map #(submit-to-channel % msg) (@u-channels term))))))
 
@@ -259,21 +259,21 @@
    set to track which nodes it has already visited."
   ([term] 
     (let [taskid (gensym "task")] 
-      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+      (dosync (commute infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
       (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
   ([term taskid] 
     (let [gt (gensym "task")
           taskid (if taskid 
                    taskid
                    gt)]
-      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+      (dosync (commute infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
       (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
   ([term invoketermset taskid] 
     (let [gt (gensym "task")
           taskid (if taskid 
                    taskid
                    (do 
-                     (dosync (commute infer-status assoc gt (edu.buffalo.csneps.util.CountingLatch.)))
+                     (dosync (commute infer-status assoc gt (edu.buffalo.zinc.util.CountingLatch.)))
                      gt))]
     (backward-infer term -10 #{} invoketermset {} (ct/currentContext) taskid)))
   ;; Opens appropriate in-channels, sends messages to their originators.
@@ -285,7 +285,7 @@
     (when-not (ct/asserted? term context)
       (cond 
         (and 
-          (= (syntactic-type-of term) :csneps.core/Implication)
+          (= (syntactic-type-of term) :zinc.core/Implication)
           (= (count (first (@down-cableset term))) 1))
         (let [ant (ffirst (@down-cableset term))
               ct (if ((ct/hyps (ct/currentContext)) ant)
@@ -380,7 +380,7 @@
    through the graph."
   [term]
   (let [taskid (gensym "task")]
-    (dosync (alter infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+    (dosync (alter infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
     ;; We need to pretend that a U-INFER message came in to this node.
     ;(send screenprinter (fn [_]  (println "inc-fwi")))
     (.increment ^CountingLatch (@infer-status taskid))
@@ -508,7 +508,7 @@
       (when (seq false-msgs)
         ;; This isn't a perfect solution, but it will stop infinite generation of (not (not ... ))
         ;; TODO: Somehow remove the new-msgs from the matched to allow later generation if needed.
-        (when-not (and (= (type-of node) :csneps.core/Negation)
+        (when-not (and (= (type-of node) :zinc.core/Negation)
                        (empty? (build/find (list 'not node))))
           (when showproofs
             (doseq [[fmsg dermsg] dermsgs-f]
@@ -765,7 +765,7 @@
                              (>= (:neg %) (- totparam (:max node)))) new-msgs)
         ich (@i-channels node)]
     (cond
-      (isa? (syntactic-type-of node) :csneps.core/Andor)
+      (isa? (syntactic-type-of node) :zinc.core/Andor)
       (when (seq case2s)
         (let [dermsgs (into {} (map #(vector % (derivative-message 
                                                  message 
@@ -788,7 +788,7 @@
           (doall 
             (for [[_ dermsg] dermsgs]
               [true (:support-set dermsg) (zipmap ich (repeat (count ich) dermsg))]))))
-      (isa? (syntactic-type-of node) :csneps.core/Thresh)
+      (isa? (syntactic-type-of node) :zinc.core/Thresh)
       (when (seq case1s)
         (let [dermsgs (into {} (map #(vector % (derivative-message 
                                                  message 
@@ -1111,7 +1111,7 @@
         ;; TODO FIX:
         new-ind (new-indefinite {:name (symbol (str "ind" (ind-counter)))
                                  :var-label (:var-label ind)
-                                 :msgs (create-message-structure :csneps.core/Indefinite nil)
+                                 :msgs (create-message-structure :zinc.core/Indefinite nil)
                                  :restriction-set (ref (set new-rsts))})]
     (inc-ind-counter)
     (instantiate-sem-type (:name new-ind) (semantic-type-of ind))
@@ -1157,16 +1157,16 @@
   [message node new-msgs]
   (print-debug :infer #{node} (print-str "INFER: (elim) Inferring in:" node))
   (case (type-of node)
-    :csneps.core/CARule (policy-instantiation message node new-msgs)
-    :csneps.core/Conjunction (conjunction-elimination message node new-msgs)
-    (:csneps.core/Numericalentailment
-     :csneps.core/Implication) (numericalentailment-elimination message node new-msgs)
-    (:csneps.core/Andor 
-     :csneps.core/Disjunction 
-     :csneps.core/Xor
-     :csneps.core/Nand)  (andor-elimination message node new-msgs)
-    (:csneps.core/Thresh
-     :csneps.core/Equivalence) (thresh-elimination message node new-msgs)
+    :zinc.core/CARule (policy-instantiation message node new-msgs)
+    :zinc.core/Conjunction (conjunction-elimination message node new-msgs)
+    (:zinc.core/Numericalentailment
+     :zinc.core/Implication) (numericalentailment-elimination message node new-msgs)
+    (:zinc.core/Andor 
+     :zinc.core/Disjunction 
+     :zinc.core/Xor
+     :zinc.core/Nand)  (andor-elimination message node new-msgs)
+    (:zinc.core/Thresh
+     :zinc.core/Equivalence) (thresh-elimination message node new-msgs)
     :csneos.core/Closure (closure-elimination message node new-msgs)
     nil))
 
@@ -1175,14 +1175,14 @@
   [message node new-msgs]
   (print-debug :infer #{node} (print-str "INFER: (intro) Inferring in:" node))
   (case (type-of node)
-    :csneps.core/Conjunction (conjunction-introduction message node new-msgs)
-    :csneps.core/Negation (negation-introduction message node new-msgs)
-    (:csneps.core/Andor 
-     :csneps.core/Disjunction 
-     :csneps.core/Xor
-     :csneps.core/Nand
-     :csneps.core/Thresh
-     :csneps.core/Equivalence)  (param2op-introduction message node new-msgs)
+    :zinc.core/Conjunction (conjunction-introduction message node new-msgs)
+    :zinc.core/Negation (negation-introduction message node new-msgs)
+    (:zinc.core/Andor 
+     :zinc.core/Disjunction 
+     :zinc.core/Xor
+     :zinc.core/Nand
+     :zinc.core/Thresh
+     :zinc.core/Equivalence)  (param2op-introduction message node new-msgs)
     nil))
 
 (defn initiate-node-task
@@ -1225,7 +1225,7 @@
           (numericalentailment-introduction message rule)))
       
       ;; Send messages onward that this has been derived.
-      (if-not (= :csneps.core/Negation (type-of term))
+      (if-not (= :zinc.core/Negation (type-of term))
         (let [imsg (derivative-message message
                                      :origin term
                                      :support-set (@support result-term)
@@ -1367,11 +1367,11 @@
   (cond
     (empty? (filter arbitraryTerm? (build/flatten-term dcs)))
     (make-linear-msg-set)
-    (and (or (= syntype :csneps.core/Numericalentailment)
-             (= syntype :csneps.core/Implication))
+    (and (or (= syntype :zinc.core/Numericalentailment)
+             (= syntype :zinc.core/Implication))
          (= n (count (first dcs))))
     (make-ptree syntype dcs)
-    (or (= syntype :csneps.core/Conjunction))
+    (or (= syntype :zinc.core/Conjunction))
     (make-ptree syntype dcs)
     :else
     (make-linear-msg-set)))
@@ -1444,7 +1444,7 @@
       :else "/")))
 
 (defn ig-status []
-  (doseq [x (sort-by first @csneps.core/TERMS)]
+  (doseq [x (sort-by first @zinc.core/TERMS)]
     (doseq [s (@semtype-in-channels (second x))]
       (println "X [semtype] -I-" (count @(:waiting-msgs s)) (print-valve s) "->" (:destination s)))
     (doseq [i (@i-channels (second x))]

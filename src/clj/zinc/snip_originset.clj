@@ -4,7 +4,7 @@
 ;;; or to apply difference operations to many sets. These functions are meant
 ;;; to abstract that away from the implementation of IGs.
 
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (defn combine-origin-tags
   [t1 t2]

@@ -1,7 +1,7 @@
 
-(ns csneps.core.relations
-  (:use [csneps.util])
-  (:require [csneps.core]))
+(ns zinc.core.relations
+  (:use [zinc.util])
+  (:require [zinc.core]))
 
 (defvar SLOTS (ref (hash-map)))
 
@@ -17,7 +17,7 @@
    f-pathfn (ref nil)         ;"forward" path function
    b-pathfn (ref nil)])       ;"backward" path function
 
-(defmethod print-method csneps.core.relations.Slot [o w]
+(defmethod print-method zinc.core.relations.Slot [o w]
   (.write ^java.io.Writer w (str "name: " (:name o)
                                  "\n\tdocstring: " (:docstring o)
                                  "\n\ttype: " (:type o)
@@ -52,7 +52,7 @@
       (println "A slot with name: " name " is already defined. Using existing definition.")
       (find-slot name))
     (do
-      (assert (csneps.core/semantic-type-p (keyword type))) ;"The type given is not a valid semantic type"
+      (assert (zinc.core/semantic-type-p (keyword type))) ;"The type given is not a valid semantic type"
       (assert (string? docstring))
       (assert (some (hash-set posadjust) '(reduce expand none)))
       (assert (some (hash-set negadjust) '(reduce expand none)))

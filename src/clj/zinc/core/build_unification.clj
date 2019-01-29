@@ -5,7 +5,7 @@
 ;;; Dr. Stuart C. Shapiro's CSE563 notes.
 ;;; Modified: 6/19/2012
 
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (def debug-unification false)
 
@@ -347,7 +347,7 @@
 
 (defn addTermToUnificationTree
   [term & {:keys [parent distnodes] :or {distnodes DistNodes}}]
-  (if (isa? (syntactic-type-of term) :csneps.core/Molecular)
+  (if (isa? (syntactic-type-of term) :zinc.core/Molecular)
     (let [termid (term-predicate term)
           termpp (:print-pattern (@caseframe term))
           nofsyms (and (seq? (first termpp)) (= (ffirst termpp) 'quote))
@@ -379,10 +379,10 @@
 (declare unifyTreeWithChain)
 
 ;(defn molecular? [term]
-;  (isa? (csneps/syntactic-type-of term) :csneps.core/Molecular))
+;  (isa? (csneps/syntactic-type-of term) :zinc.core/Molecular))
 
 (defn distnode? [node]
-  (= (type node) csneps.core.build.DistNode))
+  (= (type node) zinc.core.build.DistNode))
 
 (defn atomwftnode? [node]
   (zero? (:acceptArity node)))
@@ -438,7 +438,7 @@
 (defn unifyTreeWithChain
   [target & {:keys [variable? s t source distnodes] :or {variable? variable?, s {}, t {}, source true, distnodes @DistNodes}}]
   (let [targetnode (second (first target))
-        sourcenode (if (= (type targetnode) csneps.core.build.DistNode)
+        sourcenode (if (= (type targetnode) zinc.core.build.DistNode)
                      (findDistNode (:name targetnode) (:arity targetnode) distnodes)
                      source)]
     ;(binding [*print-level* 4] 
@@ -638,7 +638,7 @@
   (when node
     (let [currnode (if (map? node) (second (first node)) (second node))]
       (println (apply str (repeat depth "-")) (if (:acceptWft currnode)
-                                                (csneps.core.printer/term-printer (:acceptWft currnode))
+                                                (zinc.core.printer/term-printer (:acceptWft currnode))
                                                 (or (:name currnode) (:acceptString currnode))))
       (doseq [c @(:children currnode)]
         (print-tree c :depth (inc depth))))))

@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 ;;; A message is a container for a substitution. 
 
@@ -10,13 +10,13 @@
   (add-matched-and-sent-messages [this matched sent] [this matched sent remove-matched-from-working?])
   (print-messages [this]))
 
-(defmethod print-method csneps.snip.MessageStructure [o w]
+(defmethod print-method zinc.snip.MessageStructure [o w]
   (.write ^java.io.Writer w 
     (str (print-messages o))))
 
-(prefer-method print-method csneps.snip.MessageStructure java.util.Map)
-(prefer-method print-method csneps.snip.MessageStructure clojure.lang.IPersistentMap)
-(prefer-method print-method csneps.snip.MessageStructure clojure.lang.IRecord)
+(prefer-method print-method zinc.snip.MessageStructure java.util.Map)
+(prefer-method print-method zinc.snip.MessageStructure clojure.lang.IPersistentMap)
+(prefer-method print-method zinc.snip.MessageStructure clojure.lang.IRecord)
 
 ;; Type options:
 ;; U-INFER
@@ -43,7 +43,7 @@
    invoke-set #{}
    taskid nil])
 
-(defmethod print-method csneps.snip.Message [o w]
+(defmethod print-method zinc.snip.Message [o w]
   (.write ^java.io.Writer w 
     (str "(" (:priority o) ")"
          " From: " (if (:origin o) (print-str (:origin o)) "<?>")

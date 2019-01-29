@@ -1,25 +1,25 @@
-(ns csneps.snip
+(ns zinc.snip
   (:require [clojure.string :as string]
-            [csneps.core.build :as build]
-            [csneps.core.find-utils :as find-utils]
-            [csneps.core.contexts :as ct]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.relations :as slot]
-            [csneps.core.printer :as print]
+            [zinc.core.build :as build]
+            [zinc.core.find-utils :as find-utils]
+            [zinc.core.contexts :as ct]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.relations :as slot]
+            [zinc.core.printer :as print]
             [clojure.walk :as walk])
 ;  (:refer-clojure :exclude [merge])
-  (:use [csneps.core]
-        [csneps.util]
-        [csneps.configuration]
-        [csneps.debug]
-        [csneps.snip.util]
-        [csneps.core.build :only (term-prewalk variable?)]
+  (:use [zinc.core]
+        [zinc.util]
+        [zinc.configuration]
+        [zinc.debug]
+        [zinc.snip.util]
+        [zinc.core.build :only (term-prewalk variable?)]
         [clojure.core.memoize :only (memo)]
         [clojure.pprint :only (cl-format)]
         [clojure.set])
   (:import [java.util Comparator]
            [java.util.concurrent TimeUnit LinkedBlockingQueue PriorityBlockingQueue ThreadPoolExecutor]
-           [edu.buffalo.csneps.util CountingLatch]))
+           [edu.buffalo.zinc.util CountingLatch]))
 
 (declare assertTrace askif)
 

@@ -1,13 +1,13 @@
-(ns csneps.gui
+(ns zinc.gui
   (:import [edu.buffalo.cse.sneps3.gui])
   (:use [clojure.tools.nrepl.server :only (start-server stop-server)]
-        [csneps.util])
+        [zinc.util])
   (:require [clojure.tools.nrepl :as repl]
-            [csneps.core :as csneps]
+            [zinc.core :as csneps]
             [clojure.set :as set]
-            [csneps.core.relations :as slot]
-            [csneps.core.caseframes :as cf]
-            [csneps.core.contexts :as ct]))
+            [zinc.core.relations :as slot]
+            [zinc.core.caseframes :as cf]
+            [zinc.core.contexts :as ct]))
 
 ;(defn startGUI
   ;([] (startGUI (set (vals @csneps/TERMS))))

@@ -1,4 +1,4 @@
-(ns csneps.demo
+(ns zinc.demo
   (:use [clojure.java.io :only (reader)]
         [clojure.pprint :only (cl-format pprint)]))
 

@@ -1,10 +1,10 @@
-(ns csneps.core.caseframes
-  (:use [csneps.util])
-  (:require [csneps.core.relations :as slot]
-            [csneps.core :as csneps]
+(ns zinc.core.caseframes
+  (:use [zinc.util])
+  (:require [zinc.core.relations :as slot]
+            [zinc.core :as csneps]
             [clojure.pprint :as pprint]
             [clojure.string :as string]
-            [csneps.core.find-utils]))
+            [zinc.core.find-utils]))
 
 (def CASEFRAMES 
   "A set of all the caseframes." 
@@ -46,7 +46,7 @@
         (second (first (:print-pattern cf)))
         (first (:print-pattern cf))))
 
-(defmethod print-method csneps.core.caseframes.Caseframe [o w]
+(defmethod print-method zinc.core.caseframes.Caseframe [o w]
   (.write ^java.io.Writer w (str "caseframe: " (caseframe-name o)
                                  "\n\ttype: " (:type o)
                                  "\n\tslots: " (string/join (for [s (:slots o)] (str "\t" (:name s) "\n\t"))))))
@@ -74,7 +74,7 @@
         newdescstr (clojure.string/replace desc-string #"\[.*?\]" "~A")]
     (fn [n]
         (apply clojure.pprint/cl-format nil newdescstr
-               (doall (for [arc arc-list] (description (csneps.core.find-utils/findto n arc))))))))
+               (doall (for [arc arc-list] (description (zinc.core.find-utils/findto n arc))))))))
 
 (defn add-fn-cf-map
   "Adds the map from the function name fn to the caseframe cf.

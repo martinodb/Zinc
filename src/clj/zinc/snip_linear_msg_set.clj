@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 ;; This is the worst case, combinatorial algorithm. 
 

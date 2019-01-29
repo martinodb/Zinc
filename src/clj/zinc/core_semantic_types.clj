@@ -1,4 +1,4 @@
-(in-ns 'csneps.core)
+(in-ns 'zinc.core)
 
 (def TOP-SEMANTIC-TYPE :Entity)
 

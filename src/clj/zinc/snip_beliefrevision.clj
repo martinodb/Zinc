@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (defn inconsistent?
   "If one of p1 or p2 is the negation of the other one, and both

@@ -1,8 +1,8 @@
-(ns csneps.core.contexts
-  (:require [csneps.core :as csneps]
+(ns zinc.core.contexts
+  (:require [zinc.core :as csneps]
             [clojure.string :as str]
             [clojure.set :as set])
-  (:use [csneps.util]))
+  (:use [zinc.util]))
 
 (defvar CONTEXTS (ref (hash-map))
   "A map from context name to context.")
@@ -18,7 +18,7 @@
         ^clojure.lang.PersistentHashSet hyps
         ^java.lang.Boolean kinconsistent])
 
-(defmethod print-method csneps.core.contexts.Context [o w]
+(defmethod print-method zinc.core.contexts.Context [o w]
   (.write ^java.io.Writer w (str (:name o) " - " (:docstring o)
                                  "\n\tParents: " (str/join ", " (map :name (:parents o)))
                                  "\n\tConsistent?: " (not (:kinconsistent o)))))

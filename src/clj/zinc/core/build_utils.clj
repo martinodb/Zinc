@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.build)
+(in-ns 'zinc.core.build)
 
 (defn ignore-variable? [sym] (= '_ sym))
 
@@ -6,21 +6,21 @@
   (fn [term]
     (variableTerm? term)))
 
-;(def variable? #(or (= (type-of %) :csneps.core/Arbitrary) (= (type-of %) :csneps.core/QueryVariable)))
+;(def variable? #(or (= (type-of %) :zinc.core/Arbitrary) (= (type-of %) :zinc.core/QueryVariable)))
 
 (def synvariable? #(or (ignore-variable? %)
                       (and (symbol? %) (re-matches #"^\?.*" (name %)))))
 
-(def syntype-fsym-map {:csneps.core/Negation 'not,
-                       :csneps.core/Negationbyfailure 'thnot,
-                       :csneps.core/Conjunction 'and,
-                       :csneps.core/Disjunction 'or,
-                       :csneps.core/Equivalence 'iff,
-                       :csneps.core/Xor 'xor,
-                       :csneps.core/Nand 'nand,
-                       :csneps.core/Andor 'andor,
-                       :csneps.core/Thresh 'thresh,
-                       :csneps.core/Implication 'if})
+(def syntype-fsym-map {:zinc.core/Negation 'not,
+                       :zinc.core/Negationbyfailure 'thnot,
+                       :zinc.core/Conjunction 'and,
+                       :zinc.core/Disjunction 'or,
+                       :zinc.core/Equivalence 'iff,
+                       :zinc.core/Xor 'xor,
+                       :zinc.core/Nand 'nand,
+                       :zinc.core/Andor 'andor,
+                       :zinc.core/Thresh 'thresh,
+                       :zinc.core/Implication 'if})
 
 (defn term-predicate
   [term]
@@ -41,7 +41,7 @@
                                                              (second (first p)))))]
                                          (conj (doall (map inner (@down-cableset termpart))) fsym)
                                          (doall (map inner (@down-cableset termpart))))
-                                       (if ignore-type :Entity (csneps.core/semantic-type-of termpart))
+                                       (if ignore-type :Entity (zinc.core/semantic-type-of termpart))
                                        {}
                                        #{}))
     (atomicTerm? termpart) (outer termpart)
@@ -97,18 +97,18 @@
   [term]
   (let [slot-map (cf/dcsRelationTermsetMap term)]
     (case (type-of term)
-      :csneps.core/Conjunction
+      :zinc.core/Conjunction
       (get slot-map (slot/find-slot 'and))
-      (:csneps.core/Andor 
-       :csneps.core/Disjunction 
-       :csneps.core/Xor
-       :csneps.core/Nand)
+      (:zinc.core/Andor 
+       :zinc.core/Disjunction 
+       :zinc.core/Xor
+       :zinc.core/Nand)
       (get slot-map (slot/find-slot 'andorargs))
-      (:csneps.core/Thresh
-       :csneps.core/Equivalence)
+      (:zinc.core/Thresh
+       :zinc.core/Equivalence)
       (get slot-map (slot/find-slot 'threshargs))
-      (:csneps.core/Numericalentailment
-       :csneps.core/Implication)
+      (:zinc.core/Numericalentailment
+       :zinc.core/Implication)
       (get slot-map (slot/find-slot 'ant))
       nil)))
 

@@ -1,4 +1,4 @@
-(in-ns 'csneps.snip)
+(in-ns 'zinc.snip)
 
 (declare adopt-subrules unadopt-subrules add-valve-selector remove-valve-selector)
 
@@ -14,7 +14,7 @@
         taskid (gensym "task")]
     (when-not (ct/asserted? policy ct)
       (ct/hypothesize policy ct)
-      (when (isa? (syntactic-type-of policy) :csneps.core/CARule)
+      (when (isa? (syntactic-type-of policy) :zinc.core/CARule)
         (backward-infer policy taskid)
         (doseq [ich (@i-channels policy)]
           (add-valve-selector ich {} (ct/currentContext) taskid))
@@ -33,7 +33,7 @@
   (let [ct (ct/currentContext)]
     (when (ct/asserted? policy ct)
       (ct/remove-from-context policy ct)
-      (when (isa? (syntactic-type-of policy) :csneps.core/CARule)
+      (when (isa? (syntactic-type-of policy) :zinc.core/CARule)
         (cancel-infer-of policy)
         (doseq [ich (@i-channels policy)]
           (remove-valve-selector ich {} (ct/currentContext) taskid))
