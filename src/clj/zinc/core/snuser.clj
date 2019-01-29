@@ -31,7 +31,7 @@
         [zinc.core.arithmetic]
         [zinc.util]
         [zinc.debug :only (debug set-debug-nodes set-debug-features)])
-  (:import [edu.buffalo.zinc.util CountingLatch]))
+  (:import [edu.buffalo.csneps.util CountingLatch]))
 
 (declare askif askifnot defineTerm find-term             clearkb          )
 

@@ -19,7 +19,7 @@
         [clojure.set])
   (:import [java.util Comparator]
            [java.util.concurrent TimeUnit LinkedBlockingQueue PriorityBlockingQueue ThreadPoolExecutor]
-           [edu.buffalo.zinc.util CountingLatch]))
+           [edu.buffalo.csneps.util CountingLatch]))
 
 (declare assertTrace askif)
 

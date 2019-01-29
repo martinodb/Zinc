@@ -30,7 +30,7 @@
 ;; Incremented whenever a message is submitted, and decremented once inference
 ;; on a message is complete, this allows us to determine when the graph is in
 ;; a quiescent state.
-(def infer-status (ref {nil (edu.buffalo.zinc.util.CountingLatch.)}))
+(def infer-status (ref {nil (edu.buffalo.csneps.util.CountingLatch.)}))
 
 ;; Tasks have :priority metadata. This allows the queue to order them
 ;; properly for execution. Higher priority is executed first.
@@ -46,7 +46,7 @@
 ;; Priority Blocking Queue to handle the tasks.
 (def queue (PriorityBlockingQueue. 50 task-cmpr))
 
-;(def queue (edu.buffalo.zinc.util.BlockingLifoQueue.))
+;(def queue (edu.buffalo.csneps.util.BlockingLifoQueue.))
 
 ;(def queue (LinkedBlockingQueue.))
 
@@ -66,7 +66,7 @@
                          ig-cpus-to-use
                          (Long/MAX_VALUE) TimeUnit/NANOSECONDS queue))
   (.prestartAllCoreThreads ^ThreadPoolExecutor executorService)
-  (def infer-status (ref {nil (edu.buffalo.zinc.util.CountingLatch.)})))
+  (def infer-status (ref {nil (edu.buffalo.csneps.util.CountingLatch.)})))
 
 ;; Only used when exiting. 
 (defn shutdownExecutor
@@ -119,7 +119,7 @@
 (defn blocking-submit-to-channel
   [ch msg]
   (let [taskid (gensym "task")]
-    (dosync (alter infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
+    (dosync (alter infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
     (submit-to-channel ch (assoc msg :taskid taskid))
     (.await ^CountingLatch (@infer-status taskid))))
 
@@ -259,21 +259,21 @@
    set to track which nodes it has already visited."
   ([term] 
     (let [taskid (gensym "task")] 
-      (dosync (commute infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
+      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
       (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
   ([term taskid] 
     (let [gt (gensym "task")
           taskid (if taskid 
                    taskid
                    gt)]
-      (dosync (commute infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
+      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
       (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
   ([term invoketermset taskid] 
     (let [gt (gensym "task")
           taskid (if taskid 
                    taskid
                    (do 
-                     (dosync (commute infer-status assoc gt (edu.buffalo.zinc.util.CountingLatch.)))
+                     (dosync (commute infer-status assoc gt (edu.buffalo.csneps.util.CountingLatch.)))
                      gt))]
     (backward-infer term -10 #{} invoketermset {} (ct/currentContext) taskid)))
   ;; Opens appropriate in-channels, sends messages to their originators.
@@ -380,7 +380,7 @@
    through the graph."
   [term]
   (let [taskid (gensym "task")]
-    (dosync (alter infer-status assoc taskid (edu.buffalo.zinc.util.CountingLatch.)))
+    (dosync (alter infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
     ;; We need to pretend that a U-INFER message came in to this node.
     ;(send screenprinter (fn [_]  (println "inc-fwi")))
     (.increment ^CountingLatch (@infer-status taskid))
