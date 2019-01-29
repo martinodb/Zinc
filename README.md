@@ -37,7 +37,7 @@ Java HotSpot(TM) 64-Bit Server VM 10.0.2+13
     Exit: Control+D or (exit) or (quit)
  Results: Stored in vars *1, *2, *3, an exception in *e
 
-bobtailbot.core=> (require '[csneps.core.snuser :as s])
+bobtailbot.core=> (require '[zinc.core.snuser :as s])
 nil
 bobtailbot.core=> (s/clearkb true)
 Knowledge Base cleared. Contexts, slots, caseframes, and semantic types reinitialized.
