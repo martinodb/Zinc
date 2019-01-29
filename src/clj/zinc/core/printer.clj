@@ -6,7 +6,7 @@
 (ns zinc.core.printer
   (:require [clojure.string :as str]
             [zinc.core.contexts :as ct]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot])
   (:use [zinc.core :only (type-of)]
@@ -28,8 +28,8 @@
 (defn wft-string
   [term]
   (str (:name term)
-      (if (or (csneps/subtypep (csneps/semantic-type-of term) :Proposition)
-              (csneps/subtypep (csneps/semantic-type-of term) :Policy))
+      (if (or (zinc/subtypep (zinc/semantic-type-of term) :Proposition)
+              (zinc/subtypep (zinc/semantic-type-of term) :Policy))
         (if (ct/asserted? term (ct/currentContext)) "!" "?"))":"))
 
 (defn args-str
@@ -88,7 +88,7 @@
 
 (defn print-ind-deps
   [ind]
-  (let [deps (@csneps/dependencies ind)
+  (let [deps (@zinc/dependencies ind)
         labels (map get-var-label deps)]
     (apply str (interpose " " labels))))
 
@@ -105,14 +105,14 @@
             :zinc.core/Arbitrary (str "(every " var-label " ")
             :zinc.core/Indefinite (str "(some " var-label " (" (print-ind-deps term) ") ")
             :zinc.core/QueryVariable (str "(" var-label " "))
-          (print-set (@csneps/restriction-set term) false)
+          (print-set (@zinc/restriction-set term) false)
           (when (seq @(:not-same-as term))
             (str " (notSame " var-label " " (print-set @(:not-same-as term) false) ")"))
           ")")))))
 
 (defn print-closure
   [term]
-  (print-str (list 'close (map get-var-label (:closed-vars term)) (print-term (first (@csneps/down-cableset term))))))
+  (print-str (list 'close (map get-var-label (:closed-vars term)) (print-term (first (@zinc/down-cableset term))))))
 
 (defn print-carule
   [term]
@@ -138,35 +138,35 @@
     :zinc.core/Closure
       (print-closure term)
     :zinc.core/Negation
-      (print-negation (first (@csneps/down-cableset term)))
+      (print-negation (first (@zinc/down-cableset term)))
     :zinc.core/Negationbyfailure
-      (print-negationbyfailure (first (@csneps/down-cableset term)))
+      (print-negationbyfailure (first (@zinc/down-cableset term)))
     :zinc.core/Conjunction
-      (print-nary 'and (first (@csneps/down-cableset term)))
+      (print-nary 'and (first (@zinc/down-cableset term)))
     :zinc.core/Disjunction
-      (print-nary 'or (first (@csneps/down-cableset term)))
+      (print-nary 'or (first (@zinc/down-cableset term)))
     :zinc.core/Equivalence
-      (print-nary 'iff (first (@csneps/down-cableset term)))
+      (print-nary 'iff (first (@zinc/down-cableset term)))
     :zinc.core/Xor
-      (print-nary 'xor (first (@csneps/down-cableset term)))
+      (print-nary 'xor (first (@zinc/down-cableset term)))
     :zinc.core/Nand
-      (print-nary 'nand (first (@csneps/down-cableset term)))
+      (print-nary 'nand (first (@zinc/down-cableset term)))
     :zinc.core/Andor
-      (print-param2op 'andor (:min term) (:max term) (first (@csneps/down-cableset term)))
+      (print-param2op 'andor (:min term) (:max term) (first (@zinc/down-cableset term)))
     :zinc.core/Thresh
-      (print-param2op 'thresh (:min term) (:max term) (first (@csneps/down-cableset term)))
+      (print-param2op 'thresh (:min term) (:max term) (first (@zinc/down-cableset term)))
     :zinc.core/Implication
-      (print-str (list 'if (print-term (first (@csneps/down-cableset term))) (print-term (second (@csneps/down-cableset term)))))
+      (print-str (list 'if (print-term (first (@zinc/down-cableset term))) (print-term (second (@zinc/down-cableset term)))))
     :zinc.core/Numericalentailment
       (print-str (list (symbol (str "=" (if (= (:min term) 1) 'v (:min term)) ">"))
-                       (print-term (first (@csneps/down-cableset term))) (print-term (second (@csneps/down-cableset term)))))
+                       (print-term (first (@zinc/down-cableset term))) (print-term (second (@zinc/down-cableset term)))))
     :zinc.core/Arbitrary
       (print-unnamed-variable-term term)
     :zinc.core/Indefinite
       (print-unnamed-variable-term term)
     :zinc.core/QueryVariable
       (print-unnamed-variable-term term)
-    (print-molecular (@csneps/caseframe term) (@csneps/down-cableset term))
+    (print-molecular (@zinc/caseframe term) (@zinc/down-cableset term))
     ))
 
 (defn sneps-printer
@@ -183,7 +183,7 @@
 ;  [term stream]
 ;  (cl-format stream "~@<~W~:[~*~;~:[?~;!~]~]: ~W~:>"
 ;	  (:name term)
-;	  (= (csneps/semantic-type-of term) :Proposition)
+;	  (= (zinc/semantic-type-of term) :Proposition)
 ;	  (ct/asserted? term (ct/currentContext)) term))
 
 (defn print-named-variable-term
@@ -366,7 +366,7 @@
     (when headerfile 
       (.write ^java.io.Writer w "(clojure.lang.Compiler/loadFile " (first headerfile) ")\n"))
     (.write w ";;; Assumes that all required Contexts, Types, Slots, and Caseframes have now been loaded.\n(in-ns 'zinc.core.snuser)\n")
-    (doseq [term (vals @csneps/TERMS)]
+    (doseq [term (vals @zinc/TERMS)]
       (when (ct/asserted? term (ct/currentContext))
         (.write w  "(zinc.core.build/assert '")
         (if (= (:type term) :zinc.core/Atom)

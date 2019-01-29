@@ -4,7 +4,7 @@
   (:require [zinc.core.contexts :as ct]
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [zinc.core.build :as build]
             [zinc.snip :as snip]
             [zinc.gui :as gui]
@@ -38,8 +38,8 @@
 (defn adopt-rule
   "Adopts the rule with the symbol rule-name as its name."
   [rule-name]
-  (let [rules (filter #(isa? (csneps/syntactic-type-of %) :zinc.core/CARule) (vals @csneps/TERMS))
-        rule (filter #(= rule-name (:name (ffirst (@csneps/down-cableset %)))) rules)]
+  (let [rules (filter #(isa? (zinc/syntactic-type-of %) :zinc.core/CARule) (vals @zinc/TERMS))
+        rule (filter #(= rule-name (:name (ffirst (@zinc/down-cableset %)))) rules)]
     (if (first rule)
       (when-let [taskid (adopt (first rule))]
         (.await ^CountingLatch (@snip/infer-status taskid)))
@@ -127,7 +127,7 @@
 
 (defn allTerms [& {:keys [test] :or {test identity}}]
   "Returns a set of all the terms in the knowledge base."
-  (set (filter test (vals @csneps/TERMS))))
+  (set (filter test (vals @zinc/TERMS))))
 
 (defmacro defineSlot
   [name & args]
@@ -189,12 +189,12 @@
 (defn find-term
   [term]
   ;; Cast to a string before a symbol since numbers cannot be converted directly to symbols.
-  (csneps/get-term (symbol (str term))))
+  (zinc/get-term (symbol (str term))))
 
 (defn list-focused-inference-tasks
   []
-  (let [fw-tasks (apply union (vals @csneps/future-fw-infer))
-        bw-tasks (apply union (map #(deref (:future-bw-infer %)) (vals @csneps/TERMS)))]
+  (let [fw-tasks (apply union (vals @zinc/future-fw-infer))
+        bw-tasks (apply union (map #(deref (:future-bw-infer %)) (vals @zinc/TERMS)))]
     (when (seq bw-tasks) (println "Attempting to derive:"))
     (doseq [t bw-tasks]
       (println t))
@@ -206,13 +206,13 @@
   "Prints the variable nodes. First arbitraries and then indefinites. If the 
    types keyword is not nil, then it prints the types of each term."
   [& {:keys [types]}]
-  (doseq [arb @csneps/ARBITRARIES]
+  (doseq [arb @zinc/ARBITRARIES]
     (cl-format true "~:[~*~;<~S> ~]~S~%" 
                types (type arb) arb))
-  (doseq [ind @csneps/INDEFINITES]
+  (doseq [ind @zinc/INDEFINITES]
     (cl-format true "~:[~*~;<~S> ~]~S~%" 
                types (type ind) ind))
-  (doseq [qvar @csneps/QVARS]
+  (doseq [qvar @zinc/QVARS]
     (cl-format true "~:[~*~;<~S> ~]~S~%" 
                types (type qvar) qvar)))
 
@@ -224,17 +224,17 @@
   ;; Then qvar nodes
   ;; Then print molecular terms;
   [& {:keys [asserted types originsets properties ontology]}]
-  (let [terms (vals @csneps/TERMS)
+  (let [terms (vals @zinc/TERMS)
         atoms (sort-by :name (filter #(= (:type %) :zinc.core/Atom) terms))
-        arbs (sort-by :name (filter csneps/arbitraryTerm? terms))
-        inds (sort-by :name (filter csneps/indefiniteTerm? terms))
-        qvars (sort-by :name (filter csneps/queryTerm? terms))
-        mols (sort-by :name (filter csneps/molecularTerm? terms))
+        arbs (sort-by :name (filter zinc/arbitraryTerm? terms))
+        inds (sort-by :name (filter zinc/indefiniteTerm? terms))
+        qvars (sort-by :name (filter zinc/queryTerm? terms))
+        mols (sort-by :name (filter zinc/molecularTerm? terms))
         print-term (fn [x] 
-                     (when types (print (csneps/syntactic-type-of x) "-" (csneps/semantic-type-of x) " "))
-                     (if (and properties (@csneps/property-map x)) (print (@csneps/property-map x) " ") #{})
+                     (when types (print (zinc/syntactic-type-of x) "-" (zinc/semantic-type-of x) " "))
+                     (if (and properties (@zinc/property-map x)) (print (@zinc/property-map x) " ") #{})
                      (print x)
-                     (when originsets (print " " (@csneps/support x)))
+                     (when originsets (print " " (@zinc/support x)))
                      (println))]
     (doseq [x (concat atoms arbs inds qvars mols)]
       (let [asserted-in-ct (ct/asserted? x (ct/currentContext))
@@ -282,9 +282,9 @@
 
 (defn exit [] (quit))
 
-(clojure.core/load "/csneps/core/initialize")
-(clojure.core/load "/csneps/test/benchmark")
-(clojure.core/load "/csneps/test/mapper_benchmark")
+(clojure.core/load "/zinc/core/initialize")
+(clojure.core/load "/zinc/test/benchmark")
+(clojure.core/load "/zinc/test/mapper_benchmark")
 
 (def cli-options
   ;; An option with a required argument

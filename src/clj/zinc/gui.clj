@@ -3,19 +3,19 @@
   (:use [clojure.tools.nrepl.server :only (start-server stop-server)]
         [zinc.util])
   (:require [clojure.tools.nrepl :as repl]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [clojure.set :as set]
             [zinc.core.relations :as slot]
             [zinc.core.caseframes :as cf]
             [zinc.core.contexts :as ct]))
 
 ;(defn startGUI
-  ;([] (startGUI (set (vals @csneps/TERMS))))
+  ;([] (startGUI (set (vals @zinc/TERMS))))
   ;([termset]
     ;(let [rg (defonce rgen (java.util.Random. 123945))
           ;port (+ 1000 (.nextInt ^java.util.Random rgen 9000))
           ;srv (start-server :port port)
-          ;termset (set (map #(csneps/get-term %) termset))
+          ;termset (set (map #(zinc/get-term %) termset))
           ;GUI (new edu.buffalo.cse.sneps3.gui.GUI2 port termset)
           ;typechangefn (fn [ref key oldvalue newvalue] (.typesChanged (edu.buffalo.cse.sneps3.gui.GUI2/getModel) 
                                                                       ;(map-difference (:parents oldvalue) (:parents newvalue))
@@ -60,8 +60,8 @@
                               ;(.termNameGChannelMapChanged (edu.buffalo.cse.sneps3.gui.GUI2/getModel) 
                                 ;(map-difference newvalue oldvalue)
                                 ;(empty? newvalue)))] 
-      ;(add-watch csneps/semantic-type-hierarchy :types typechangefn)
-      ;(add-watch csneps/TERMS :terms termchangefn)
+      ;(add-watch zinc/semantic-type-hierarchy :types typechangefn)
+      ;(add-watch zinc/TERMS :terms termchangefn)
       ;(add-watch ct/CONTEXTS :contexts contextchangefn)
       ;(add-watch slot/SLOTS :slots slotchangefn)
       ;(add-watch cf/CASEFRAMES :cfs caseframechangefn)
@@ -69,9 +69,9 @@
       ;(add-watch ct/CONTEXTS :cts contextchangefn)
       ;(add-watch ct/*CurrentContext* :currct currentcontextchangefn)
       ;(add-watch (:hyps (ct/currentContext)) :currhyps currentcontexthypschangefn)
-      ;(add-watch csneps/i-channels :ichannels ichannelschangefn)
-      ;(add-watch csneps/g-channels :gchannels gchannelschangefn)
-      ;(add-watch csneps/u-channels :uchannels uchannelschangefn))))
+      ;(add-watch zinc/i-channels :ichannels ichannelschangefn)
+      ;(add-watch zinc/g-channels :gchannels gchannelschangefn)
+      ;(add-watch zinc/u-channels :uchannels uchannelschangefn))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Helpers for the REPL ;;;

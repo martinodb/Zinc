@@ -379,7 +379,7 @@
 (declare unifyTreeWithChain)
 
 ;(defn molecular? [term]
-;  (isa? (csneps/syntactic-type-of term) :zinc.core/Molecular))
+;  (isa? (zinc/syntactic-type-of term) :zinc.core/Molecular))
 
 (defn distnode? [node]
   (= (type node) zinc.core.build.DistNode))

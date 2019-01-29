@@ -8,8 +8,8 @@
 ;; Load the namespace contexts
 (load "core/contexts")
 ;; Load the namespace sneps3
-;(load "csneps/core_syntactic_types")
-;(load "csneps/core_semantic_types")
+;(load "zinc/core_syntactic_types")
+;(load "zinc/core_semantic_types")
 ;; Load the 'relations' namespace
 (load "core/relations")
 ;; Load the 'find' namespace

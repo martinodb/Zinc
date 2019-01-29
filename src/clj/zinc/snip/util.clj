@@ -1,5 +1,5 @@
 (ns zinc.snip.util
-  (:require [zinc.core :as csneps]
+  (:require [zinc.core :as zinc]
             [zinc.core.contexts :as ct]
             [zinc.core.build :as build]
             [clojure.set :as set]))

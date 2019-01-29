@@ -2,7 +2,7 @@
   (:require [zinc.core.contexts :as ct]
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [zinc.core.build :as build]
             [zinc.snip :as snip]
             [clojure.set :as set]
@@ -115,7 +115,7 @@
 
 (defn statistics
   []
-  (let [molterms (filter csneps/molecularTerm? (vals @csneps/TERMS))
+  (let [molterms (filter zinc/molecularTerm? (vals @zinc/TERMS))
         inferredin (filter #(not (nil? @(:ruis %))) molterms)]
     (println "Molecular Terms:" (count molterms))
     (println "Terms Inferred In:" (count inferredin))))

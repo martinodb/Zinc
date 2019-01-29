@@ -3,7 +3,7 @@
             [zinc.core.caseframes :as cf]
             [zinc.core.printer :as print]
             [zinc.core.relations :as slot]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [zinc.core.build :as build]
             [zinc.snip :as snip]
             [clojure.set :as set]

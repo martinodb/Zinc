@@ -24,44 +24,44 @@
       ;; it's side-effect producing. 
 
       ;;Remove term-type maps from semantic types.
-      (ref-set csneps/type-map (hash-map))
-      (ref-set csneps/support-set (hash-map))
-      (ref-set csneps/supported-nodes-set (hash-map))
-      (ref-set csneps/primaction (hash-map))
+      (ref-set zinc/type-map (hash-map))
+      (ref-set zinc/support-set (hash-map))
+      (ref-set zinc/supported-nodes-set (hash-map))
+      (ref-set zinc/primaction (hash-map))
 
 
       ;; Initialize the set of terms.
-      (ref-set csneps/WFTCOUNT 0)
-      (ref-set csneps/TERMS (hash-map))
+      (ref-set zinc/WFTCOUNT 0)
+      (ref-set zinc/TERMS (hash-map))
 
       ;; Initialize the set of arbitraries.
-      (ref-set csneps/ARBITRARIES #{})
-      (ref-set csneps/ARBCOUNT 0)
+      (ref-set zinc/ARBITRARIES #{})
+      (ref-set zinc/ARBCOUNT 0)
 
       ;; Initialize the set of indefinites.
-      (ref-set csneps/INDEFINITES #{})
-      (ref-set csneps/INDCOUNT 0)
+      (ref-set zinc/INDEFINITES #{})
+      (ref-set zinc/INDCOUNT 0)
       
       ;; Initialize the set of question mark variables.
-      (ref-set csneps/QVARS #{})
-      (ref-set csneps/QVARCOUNT 0)
+      (ref-set zinc/QVARS #{})
+      (ref-set zinc/QVARCOUNT 0)
       
       ;; Reset term parts:
-      (ref-set csneps/i-channels {})
-			(ref-set csneps/u-channels {})
-			(ref-set csneps/g-channels {})
-			(ref-set csneps/ant-in-channels {})
-			(ref-set csneps/future-fw-infer {})
-			(ref-set csneps/instances {})
-			(ref-set csneps/expected-instances {})
-			(ref-set csneps/up-cablesetw {})
-			(ref-set csneps/support {})
-			(ref-set csneps/msgs {})
-			(ref-set csneps/restriction-set {})
-			(ref-set csneps/dependencies {})
-			(ref-set csneps/lattice-node {})
-			(ref-set csneps/down-cableset {})
-			(ref-set csneps/caseframe {})
+      (ref-set zinc/i-channels {})
+			(ref-set zinc/u-channels {})
+			(ref-set zinc/g-channels {})
+			(ref-set zinc/ant-in-channels {})
+			(ref-set zinc/future-fw-infer {})
+			(ref-set zinc/instances {})
+			(ref-set zinc/expected-instances {})
+			(ref-set zinc/up-cablesetw {})
+			(ref-set zinc/support {})
+			(ref-set zinc/msgs {})
+			(ref-set zinc/restriction-set {})
+			(ref-set zinc/dependencies {})
+			(ref-set zinc/lattice-node {})
+			(ref-set zinc/down-cableset {})
+			(ref-set zinc/caseframe {})
    
       ;; Clear cache used by IG.
       (memo-clear! snip/hyp-subst-of-ct?)

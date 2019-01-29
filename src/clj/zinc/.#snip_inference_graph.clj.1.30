@@ -83,7 +83,7 @@
     (doall (map #(submit-to-channel % msg) @(:i-channels term))))
   ;; Conjunctions:
   ;; Conjunctions have no antecedents if they are true, so the Y-INFER messages must be passed on here
-  (when (= (csneps/type-of term) :zinc.core/Conjunction)
+  (when (= (zinc/type-of term) :zinc.core/Conjunction)
     (let [msg (new-message {:origin term, :support-set #{term}, :type 'Y-INFER, :fwd-infer? fwd-infer})]
       (doall (map #(submit-to-channel % msg) @(:y-channels term)))))
   ;; Negations:
@@ -260,7 +260,7 @@
                          new-ruis)]
     (when match-ruis 
 ;      (cancel-infer node)
-      ;(when (< (:pos match-ruis) (csneps/totparam node)) (cancel-infer node))
+      ;(when (< (:pos match-ruis) (zinc/totparam node)) (cancel-infer node))
       (apply conj {} (doall (map #(vector % (RUI->message match-ruis node 'Y-INFER true true))
                                  (filter #(not (ct/asserted? % (ct/currentContext))) @(:y-channels node))))))))
 
@@ -307,7 +307,7 @@
   [message node]
   (when (nil? @(:ruis node)) (create-rui-structure node))
   (let [new-ruis (get-rule-use-info (:ruis node) (rui-from-message message))
-        totparam (csneps/totparam node)
+        totparam (zinc/totparam node)
         pos-match (some #(when (= (:pos %) (:max node))
                            %) 
                         new-ruis)
@@ -341,7 +341,7 @@
   (when (nil? @(:ruis node)) (create-rui-structure node))
   (let [new-ruis (get-rule-use-info (:ruis node) (rui-from-message message))
         merged-rui (when new-ruis (reduce merge new-ruis)) ;; If they contradict, we have other problems...
-        totparam (csneps/totparam node)
+        totparam (zinc/totparam node)
         case1 (and merged-rui
                    (> (:pos merged-rui) (:max node))
                    (> (:neg merged-rui) (- totparam (:min node))))
@@ -357,12 +357,12 @@
         ich @(:i-channels node)]
     (when debug (send screenprinter (fn [_]  (println case1 case2))))
     (cond
-      (isa? (csneps/syntactic-type-of node) :zinc.core/Andor)
+      (isa? (zinc/syntactic-type-of node) :zinc.core/Andor)
       (if case2
         [true (zipmap ich (repeat (count ich) dermsg-t))])
         ;[false (zipmap ich (repeat (count ich) dermsg-f))])
         ;(and (not case1) case2) (zipmap ich (repeat (count ich) dermsg)))
-      (isa? (csneps/syntactic-type-of node) :zinc.core/Thresh)
+      (isa? (zinc/syntactic-type-of node) :zinc.core/Thresh)
       (if case1
         [true (zipmap ich (repeat (count ich) dermsg-t))]))))
         ;[false (zipmap ich (repeat (count ich) dermsg-f))]))))
@@ -373,7 +373,7 @@
   [message node]
   (when (nil? @(:ruis node)) (create-rui-structure node))
   (let [new-ruis (get-rule-use-info (:ruis node) (rui-from-message message))
-        totparam (csneps/totparam node)
+        totparam (zinc/totparam node)
         ;; Case 1: There are >= minimum true. Therefore > maximum must be true. 
         ;; If there are totparam - max - 1 false, then we can make the rest true.
         more-than-min-true-match (some #(when (and (>= (:pos %) (:min node))
@@ -404,7 +404,7 @@
   "Input is a message and node, output is a set of messages derived."
   [message node]
   (when debug (send screenprinter (fn [_]  (println "Inferring in:" node))))
-  (case (csneps/type-of node)
+  (case (zinc/type-of node)
     :zinc.core/Negation (negation-elimination message node)
     :zinc.core/Conjunction (conjunction-elimination message node)
     (:zinc.core/Numericalentailment
@@ -422,7 +422,7 @@
   ""
   [message node]
   (when debug (send screenprinter (fn [_]  (println "Inferring in:" node))))
-  (case (csneps/type-of node)
+  (case (zinc/type-of node)
     :zinc.core/Negation (negation-introduction message node)
     :zinc.core/Conjunction (conjunction-introduction message node)
     (:zinc.core/Numericalentailment
@@ -465,7 +465,7 @@
       ;; make the assertion and let my i-channels know I am now
       ;; true.
       (do
-        ;(println (ct/asserted?  (csneps/get-term 'wft1) (ct/currentContext)) (:support-set message))
+        ;(println (ct/asserted?  (zinc/get-term 'wft1) (ct/currentContext)) (:support-set message))
         (dosync (alter (:support term) conj (:support-set message)))
         (when-not (ct/asserted? term (ct/currentContext))
           (if print-intermediate-results

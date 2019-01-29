@@ -3,14 +3,14 @@
             [zinc.core.caseframes :as cf]
             [zinc.core.printer :as print]
             [zinc.core.relations :as slot]
-            [zinc.core :as csneps]
+            [zinc.core :as zinc]
             [zinc.core.build :as build]
             [zinc.snip :as snip]
             [clojure.set :as set]
             [clojure.string :as str]
             [zinc.core.snuser :as snuser]))
 
-(declare sneps3kbtocsneps semtypesToObjLang)
+(declare sneps3kbtozinc semtypesToObjLang)
 
 (def runtime (atom 0))
 
@@ -43,7 +43,7 @@
 (defn loadkb
   [msgfile framefile rulefile]
   (load-file framefile)
-  (sneps3kbtocsneps msgfile)
+  (sneps3kbtozinc msgfile)
   (semtypesToObjLang)
   (load-file rulefile))
 
@@ -68,19 +68,19 @@
 
 (defn semtypesToObjLang
   []
-;  (doseq [[c ps] (:parents @csneps/semantic-type-hierarchy)
+;  (doseq [[c ps] (:parents @zinc/semantic-type-hierarchy)
 ;          p ps]
 ;    (snuser/assert `(~'Isa (~'every ~'x (~'Isa ~'x ~(name c))) ~(name p))))
-  (let [terms (filter csneps/atomicTerm? (vals @csneps/TERMS))]
+  (let [terms (filter zinc/atomicTerm? (vals @zinc/TERMS))]
     (doseq [t terms]
-      (snuser/assert ['Isa t (name (csneps/semantic-type-of t))]))))
+      (snuser/assert ['Isa t (name (zinc/semantic-type-of t))]))))
 
 (defn typeToGeneric
   [typestr]
   (let [typeseq (read-string typestr)]
     (str (list 'Isa (list 'every 'x (list 'Isa 'x (second typeseq))) (nth typeseq 2)))))
 
-(defn sneps3kbtocsneps
+(defn sneps3kbtozinc
   [filename]
   (let [filestr (-> (slurp filename)
                   (str/replace "ct:assert" "zinc.core.snuser/assert")

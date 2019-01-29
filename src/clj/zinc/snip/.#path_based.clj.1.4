@@ -19,7 +19,7 @@
   "Returns the set of nodes
    from which the given slot, or a path for the slot, goes to term."
   [terms slotname]
-  (let [termset (if (set? terms) terms (hash-set (csneps/get-term terms)))
+  (let [termset (if (set? terms) terms (hash-set (zinc/get-term terms)))
         slot (slot/find-slot slotname)
         bfn @(:b-pathfn slot)]
     (if bfn 
@@ -30,7 +30,7 @@
   "Returns the set of nodes to which the given slot goes from 
    each of the terms, or to which the path for the slot goes"
   [terms slotname]
-  (let [termset (if (set? terms) terms (hash-set (csneps/get-term terms)))
+  (let [termset (if (set? terms) terms (hash-set (zinc/get-term terms)))
         slot (slot/find-slot slotname)
         ffn @(:f-pathfn slot)]
     (if ffn 
@@ -128,7 +128,7 @@
   (or (and (symbol? symbol)
 	         (= symbol '?)
 	         (not (empty? termSet)))
-      (get termSet (csneps/get-term symbol))))
+      (get termSet (zinc/get-term symbol))))
 
 (defn build-path-fn
   "Given a path expression, returns the function that will traverse that path"
@@ -192,8 +192,8 @@
   (let [termset (cond
                   (set? terms) terms
                   (nil? terms) #{}
-                  (symbol? terms) #{(csneps/get-term terms)}
-                  (seq? terms) (set (map #(csneps/get-term %) terms)))
+                  (symbol? terms) #{(zinc/get-term terms)}
+                  (seq? terms) (set (map #(zinc/get-term %) terms)))
         builtpath (build-path-fn path)]
     (builtpath termset)))
 
@@ -211,7 +211,7 @@
                                                     (map #(pb-findfroms % slot) fillers))
                                                   (cf/dcsRelationTermsetMap p)))))]
     (println "tt" t))
-  (if (isa? (csneps/type-of p) :zinc.core/Molecular)
+  (if (isa? (zinc/type-of p) :zinc.core/Molecular)
     (let [results (remove #(not (ct/asserted? % context))
                           (apply intersection
                                  (map set 

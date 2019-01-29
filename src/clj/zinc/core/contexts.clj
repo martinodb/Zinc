@@ -1,5 +1,5 @@
 (ns zinc.core.contexts
-  (:require [zinc.core :as csneps]
+  (:require [zinc.core :as zinc]
             [clojure.string :as str]
             [clojure.set :as set])
   (:use [zinc.util]))
@@ -113,7 +113,7 @@
             context
             (some 
               #(set/subset? (second %) cthyps)
-              (filter #(not (= (first %) 'hyp)) (@csneps/support p)))
+              (filter #(not (= (first %) 'hyp)) (@zinc/support p)))
             context))))))
 
 (defn ontology-term?
@@ -124,14 +124,14 @@
   [p]
   (or
     (asserted? p (find-context 'OntologyCT) :local true)
-    (csneps/semtype? (keyword (:name p)))
+    (zinc/semtype? (keyword (:name p)))
     (and
-      (csneps/arbitraryTerm? p)
-      (= 1 (count (@csneps/restriction-set p)))
-      (let [res (first (@csneps/restriction-set p))
-            cf (second (first (:print-pattern (@csneps/caseframe res))))
-            arg2 (when (= cf 'Isa) (second (@csneps/down-cableset res)))]
+      (zinc/arbitraryTerm? p)
+      (= 1 (count (@zinc/restriction-set p)))
+      (let [res (first (@zinc/restriction-set p))
+            cf (second (first (:print-pattern (@zinc/caseframe res))))
+            arg2 (when (= cf 'Isa) (second (@zinc/down-cableset res)))]
         (when arg2
-          (every? #(csneps/semtype? (keyword (:name %))) arg2))))))
+          (every? #(zinc/semtype? (keyword (:name %))) arg2))))))
             
       
