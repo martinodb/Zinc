@@ -2,7 +2,7 @@
 ;;; Stuart C. Shapiro
 ;;; January 30, 2012
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 (clearkb true)
 
 (defineSlot subclass :type Category :negadjust reduce

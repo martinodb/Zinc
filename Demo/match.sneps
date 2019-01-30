@@ -2,7 +2,7 @@
 ;;; Daniel R. Schlegel
 ;;; Created 12/9/2013
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 
 (clearkb true)
 

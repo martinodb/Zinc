@@ -1,6 +1,6 @@
 ;;; Demonstrates condition-action rules.
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 
 ;; Simple rule.
 

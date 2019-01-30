@@ -22,7 +22,7 @@
 ;;; 
 ;;; Contributor(s): ______________________________________.
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 ;; Initialize KB completely
 (clearkb true)
 ;;; Initial set of semantic types

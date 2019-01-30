@@ -35,7 +35,7 @@
   ;:project-init (require 'clojure.pprint) 
   :repl-options [:print clojure.core/println] ;[:print clojure.pprint/pprint]
   :jvm-opts ["-server"] 
-  ;:main csneps.core.snuser
+  ;:main zinc.core.snuser
   
   
   ;:local-repo  "../../bobtailbot/local-m2"

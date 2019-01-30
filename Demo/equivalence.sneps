@@ -1,7 +1,7 @@
 ;;; Basic Demo of CSNePS Equivalence Elimination and Introduction
 ;;; ================================
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 ;; Initialize KB completely
 (clearkb true)
 

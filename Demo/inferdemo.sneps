@@ -10,7 +10,7 @@
 ;;;    b. Is A derivable by the Introduction rule of its main connective?
 ;;; 5. Is (not A) derivable?  Try 1--4.
 
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 
 (clearkb true)
 (assert '(and (Isa (setof Fido Rover Lassie) (setof Dog Pet))

@@ -21,7 +21,7 @@
 ;;; 
 ;;; Contributor(s): ______________________________________.
 
-(in-ns 'csneps.demo)
+(in-ns 'zinc.demo)
 
 (def demoindex [["Demonstration of basic CSNePS functionality." "basic-demo.sneps"],
                 ["Example of function-valued functions." "refcl.sneps"],

@@ -1,4 +1,4 @@
-(in-ns 'csneps.core.snuser)
+(in-ns 'zinc.core.snuser)
 
 ;;; Utility Functionss
 
