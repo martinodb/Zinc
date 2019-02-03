@@ -33,9 +33,12 @@
   :java-source-paths ["src/jvm/"] ;leiningen 2 compat.
   :java-source-path "src/jvm/" ;leiningen 1.x compat.
   ;:project-init (require 'clojure.pprint) 
-  :repl-options [:print clojure.core/println] ;[:print clojure.pprint/pprint]
+  :repl-options {:init-ns zinc.core.snuser
+                  :print clojure.core/println} ; :print clojure.pprint/pprint
+                 
   :jvm-opts ["-server"] 
   ;:main zinc.core.snuser
+  
   
   
   ;:local-repo  "../../bobtailbot/local-m2"
