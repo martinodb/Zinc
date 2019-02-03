@@ -1,13 +1,16 @@
 (ns zinc.gui
-  (:import [edu.buffalo.cse.sneps3.gui])
-  (:use [clojure.tools.nrepl.server :only (start-server stop-server)]
-        [zinc.util])
-  (:require [clojure.tools.nrepl :as repl]
-            [zinc.core :as zinc]
-            [clojure.set :as set]
-            [zinc.core.relations :as slot]
-            [zinc.core.caseframes :as cf]
-            [zinc.core.contexts :as ct]))
+  ;(:import [edu.buffalo.cse.sneps3.gui])
+  ;(:use [clojure.tools.nrepl.server :only (start-server stop-server)]    [zinc.util])
+  ;(:require 
+            ;[clojure.tools.nrepl :as repl]
+            ;[zinc.core :as zinc]
+            ;[clojure.set :as set]
+            ;[zinc.core.relations :as slot]
+            ;[zinc.core.caseframes :as cf]
+            ;[zinc.core.contexts :as ct]
+            ;)   
+            
+              )
 
 ;(defn startGUI
   ;([] (startGUI (set (vals @zinc/TERMS))))
