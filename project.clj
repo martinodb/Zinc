@@ -5,18 +5,18 @@
             :url "https://cse.buffalo.edu/sneps/ubpl.pdf"
             :distribution :repo
             :comments "same as CSNePS"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.match "0.2.1"]
-                 [org.clojure/core.memoize "0.5.9"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/core.match "0.2.2"]
+                 [org.clojure/core.memoize "0.7.1"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/math.combinatorics "0.1.4"]
-                 [org.clojure/tools.trace "0.7.9"]
-                 [org.clojure/tools.nrepl "0.2.3"]
+                 [org.clojure/tools.trace "0.7.10"]
+                 [org.clojure/tools.nrepl "0.2.13"]
                  
                  
                  
                  
-                 [junit/junit "3.8.2"]
+                 [junit/junit "4.12"]
                  
                  
                  
@@ -27,6 +27,17 @@
                  
                  
                  ]
+  
+  
+  :profiles
+    {:dev {:source-paths ["dev" "src" "test"]
+           :dependencies [ [org.clojure/tools.namespace "0.2.10"]   ]
+           :plugins [  [lein-ancient "0.6.15"]  ]    }
+   ;:uberjar {:aot :all} 
+      }
+  
+  
+  
   
   :source-paths ["src/clj/"]
   :source-path "src/clj/"
