@@ -15,9 +15,11 @@
                  
                  
                  
-                 
                  [junit/junit "4.12"]
                  
+                 ;;; added by martinodb
+                 [com.taoensso/timbre "4.10.0"] ; logging
+                 ;;;
                  
                  
                  ;;; this is new
