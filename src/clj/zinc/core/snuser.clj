@@ -298,15 +298,3 @@
 ;;;;;
 
 
-
-
-;(defn -main [& args]
-  ;(let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    ;(when (:help options)
-      ;(println summary)
-      ;(System/exit 0))
-    ;(clearkb true)
-    ;(if (:cli options)
-      ;(reply.main/launch {:custom-eval '(in-ns 'zinc.core.snuser)})
-      ;(gui/startGUI))))
-
