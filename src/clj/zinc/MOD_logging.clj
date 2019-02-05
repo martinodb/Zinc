@@ -75,7 +75,7 @@
 
 ;;;; pick one.
 ;(def cl-format-info    cl-format-wrnlog-info-log)
-(def cl-format-info cl-format-wrnlog-info-timbre)
+(def cl-format-info cl-format-info-timbre)
 ;;;;;;;;;;;;;;;;;;;;;;
 
 
