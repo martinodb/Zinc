@@ -1,7 +1,8 @@
 ;(set! *warn-on-reflection* true)
 
 (ns zinc.core.snuser
-  (:require [zinc.core.contexts :as ct]
+  (:require [zinc.MOD-logging :as Mlogg :refer [wdm wtim wlog wdm2 wtim2 wlog2]] ;; added by martinodb.
+            [zinc.core.contexts :as ct]
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot]
             [zinc.core :as zinc]
