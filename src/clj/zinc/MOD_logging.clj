@@ -99,31 +99,6 @@
 
 
 
-;;;; shorter names.
-;;(def wos with-out-str)
-;(defmacro wos [&body] `(with-out-str ~@body))
-
-
-
-
-;;(def wdm with-out-str-dm)
-;(defmacro wdm [&body] `(with-out-str-dm ~@body))
-
-;;(def wtim wrnlog-info-timbre)
-;(defmacro wtim [&body] `(wrnlog-info-timbre ~@body))
-
-;;(def wlog wrnlog-info-log)
-;(defmacro wlog [&body] `(wrnlog-info-log ~@body))
-;;;;
-
-;;(def wdm2 with-out-str-dm-2)
-;(defmacro wdm2 [&body] `(with-out-str-dm-2 ~@body))
-
-;;(def wtim2 wrnlog-info-timbre-2)
-;(defmacro wtim2 [&body] `(wrnlog-info-timbre-2 ~@body))
-
-;;(def wlog2 wrnlog-info-log-2)
-;(defmacro wlog2 [&body] `(wrnlog-info-log-2 ~@body))
 
 
 ;;;;;;;;;;
