@@ -210,7 +210,7 @@
    else return the empty set."
   [p context]
   (when @goaltrace
-    (cl-format-info true "~&I will consider using Path-Based inference.~%"))
+    (cl-format true "~&I will consider using Path-Based inference.~%"))
   (if (isa? (type-of p) :zinc.core/Molecular)
     (let [dcs (:down-cableset p)
           results (remove #(not (ct/asserted? % context))

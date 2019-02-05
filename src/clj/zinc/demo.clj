@@ -1,8 +1,5 @@
 (ns zinc.demo
   (:use [clojure.java.io :only (reader)]
-        ;;; added by martinodb
-        [zinc.logging :as logging :refer [cl-format-info]]
-        ;;;
         [clojure.pprint :only (cl-format pprint)]))
 
 (declare demo demoindex)
@@ -66,7 +63,7 @@
                                                              (if (= 'exit form) request-exit form))))
                                 (recur))
                     ("?" "h") (do 
-                                (cl-format-info true
+                                (cl-format true
                                            "~%The following commands are available at pause points:~
                                             ~%  h,?            Print this help message~
                                             ~%  l,^            Enter Clojure read/eval/print loop~

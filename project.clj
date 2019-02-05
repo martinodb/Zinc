@@ -19,7 +19,6 @@
                  
                  ;;; added by martinodb
                  [com.taoensso/timbre "4.10.0"] ; logging
-                 [org.clojure/tools.logging "0.4.1"]
                  ;;;
                  
                  
