@@ -1,7 +1,11 @@
 (ns zinc.util
   (:use [clojure.string :only (join)]
         [clojure.pprint])
-  (:require [clojure.set :as set])
+  (:require [clojure.set :as set]
+            ;;; added by martinodb
+            [zinc.logging :as logging :refer [cl-format-info]]
+            ;;;
+              )
   (:import (java.util.regex Pattern)))
 
 (defmacro typecase [e & clauses]
@@ -291,10 +295,10 @@
   (when-not choices
     (error "chooseFromMenu called with no choices."))
   (let [len (count choices)]
-    (cl-format true "~%~A~2%" msgString)
+    (cl-format-info true "~%~A~2%" msgString)
     (doseq [n (range len)]
-      (cl-format true "~&~D. ~A~%" (inc 1) (nth choices n)))
-    (cl-format true "~&~D. ~A~2%" (inc len) "Cancel")
+      (cl-format-info true "~&~D. ~A~%" (inc 1) (nth choices n)))
+    (cl-format-info true "~&~D. ~A~2%" (inc len) "Cancel")
     (dec (Integer/parseInt (read-line)))))
 
 (defn menuChooseFromList

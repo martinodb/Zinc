@@ -3,6 +3,9 @@
   (:require [zinc.core.relations :as slot]
             [zinc.core :as zinc]
             [clojure.pprint :as pprint]
+            ;;; added by martinodb
+            ;[zinc.logging :as logging :refer [cl-format-info]]
+            ;;; NOTE: only use to replace "cl-format true", not "cl-format nil"
             [clojure.string :as string]
             [zinc.core.find-utils]))
 

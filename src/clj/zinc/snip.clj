@@ -5,6 +5,9 @@
             [zinc.core.contexts :as ct]
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot]
+            ;;; added by martinodb
+            [zinc.logging :as logging :refer [cl-format-info]]
+            ;;;
             [zinc.core.printer :as print]
             [clojure.walk :as walk])
 ;  (:refer-clojure :exclude [merge])
@@ -49,11 +52,11 @@
            that this goal is a subgoal of.."
   [prop context termstack]
   (let [p (build/build prop :Proposition {} #{})]
-    (when @goaltrace (cl-format true "~&I wonder if ~S~%" p))
+    (when @goaltrace (cl-format-info true "~&I wonder if ~S~%" p))
     (cond
       (ct/asserted? p context)
       (do
-        (when @goaltrace (cl-format true "~&I know that ~S~%" p))
+        (when @goaltrace (cl-format-info true "~&I know that ~S~%" p))
         #{p})
       :else
       (setOr

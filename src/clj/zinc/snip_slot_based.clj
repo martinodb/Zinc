@@ -190,7 +190,7 @@
     (do 
 	    ;;Look at the terms stored in the target's caseframe
 	    (when @goaltrace
-	      (cl-format true "~&I will consider using Slot&Path-Based inference.~%"))
+	      (cl-format-info true "~&I will consider using Slot&Path-Based inference.~%"))
 	    (or 
 	      (loop 
 	        [terms @(:terms (@caseframe target))]

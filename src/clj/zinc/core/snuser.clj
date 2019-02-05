@@ -9,6 +9,9 @@
             [zinc.snip :as snip]
             [zinc.gui :as gui]
             [zinc.utils.ontology :as onto-tools]
+            ;;; added by martinodb
+            [zinc.logging :as logging :refer [cl-format-info]]
+            ;;;
             [clojure.tools.cli :refer [parse-opts]]
             [reply.main])
   (:use clojure.stacktrace)
@@ -207,13 +210,13 @@
    types keyword is not nil, then it prints the types of each term."
   [& {:keys [types]}]
   (doseq [arb @zinc/ARBITRARIES]
-    (cl-format true "~:[~*~;<~S> ~]~S~%" 
+    (cl-format-info true "~:[~*~;<~S> ~]~S~%" 
                types (type arb) arb))
   (doseq [ind @zinc/INDEFINITES]
-    (cl-format true "~:[~*~;<~S> ~]~S~%" 
+    (cl-format-info true "~:[~*~;<~S> ~]~S~%" 
                types (type ind) ind))
   (doseq [qvar @zinc/QVARS]
-    (cl-format true "~:[~*~;<~S> ~]~S~%" 
+    (cl-format-info true "~:[~*~;<~S> ~]~S~%" 
                types (type qvar) qvar)))
 
 (defn list-terms

@@ -203,7 +203,7 @@
    else return the empty set."
   [p context]
   (when GOALTRACE
-    (cl-format true "~&I will consider using Path-Based inference.~%"))
+    (cl-format-info true "~&I will consider using Path-Based inference.~%"))
   (let [t (apply intersection
                                  (map set 
                                       (apply concat
