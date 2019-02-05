@@ -44,7 +44,41 @@
          (do (log/info (str s#))
              r#) ))))
 
-;;;;
+
+;;;;;;;;;
+
+
+(defmacro with-out-str-dm-2 "Like with-out-str-dm, but takes only one sexpr, without the parens, so there's no nesting"
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       (let [r# ~body]
+         {:result r#
+          :strn    (str s#)}))))
+
+
+
+(defmacro wrnlog-info-timbre-2 "Like wrnlog-info-timbre, but takes only one sexpr, without the parens, so there's no nesting."
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       (let [r# ~body]
+         (do (timbre/info (str s#))
+             r#) ))))
+
+
+(defmacro wrnlog-info-log-2 "Like wrnlog-info-log, but takes only one sexpr, without the parens, so there's no nesting."
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       (let [r# ~body]
+         (do (log/info (str s#))
+             r#) ))))
+
+;;;;;;;;;
+;;;;;;;;;
+
+
 
 (defn println-wrnlog-info-timbre "println replacement. Returns the result, logs the output string as info. Uses Timbre logging."
 [& more] (->> (apply println more)(wrnlog-info-timbre))  )
@@ -67,11 +101,16 @@
 
 ;;; shorter names.
 (def wos with-out-str)
+
 (def wdm with-out-str-dm)
 (def wtim wrnlog-info-timbre)
 (def wlog wrnlog-info-log)
+;;;
 
-;;;;;
+(def wdm2 with-out-str-dm-2)
+(def wtim2 wrnlog-info-timbre-2)
+(def wlog2 wrnlog-info-log-2)
+;;;;;;;;;;
 
 
 
