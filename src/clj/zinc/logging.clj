@@ -1,6 +1,6 @@
 ;;; This ns was added by martinodb
 
-(ns zinc.MOD-logging
+(ns zinc.logging
  (:require
           [clojure.tools.logging :as log]
           
