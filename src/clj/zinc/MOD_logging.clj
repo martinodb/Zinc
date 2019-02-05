@@ -68,14 +68,14 @@
 
 
 ;;;; pick one.
-;(def println-info    println-wrnlog-info-log)
-(def println-info    println-wrnlog-info-timbre)
+(def println-info    println-wrnlog-info-log)
+;(def println-info    println-wrnlog-info-timbre)
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;; pick one.
-;(def cl-format-info    cl-format-wrnlog-info-log)
-(def cl-format-info cl-format-info-timbre)
+(def cl-format-info    cl-format-wrnlog-info-log)
+;(def cl-format-info cl-format-info-timbre)
 ;;;;;;;;;;;;;;;;;;;;;;
 
 
