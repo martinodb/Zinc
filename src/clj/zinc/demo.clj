@@ -1,7 +1,7 @@
 (ns zinc.demo
   (:use [clojure.java.io :only (reader)]
         ;;; added by martinodb
-        [zinc.logging :as logging :refer [cl-format-info]]
+        [zinc.MOD-logging :as logging :refer [cl-format-info]]
         ;;;
         [clojure.pprint :only (cl-format pprint)]))
 

@@ -10,7 +10,7 @@
             [zinc.gui :as gui]
             [zinc.utils.ontology :as onto-tools]
             ;;; added by martinodb
-            [zinc.logging :as logging :refer [cl-format-info]]
+            [zinc.MOD-logging :as logging :refer [cl-format-info]]
             ;;;
             [clojure.tools.cli :refer [parse-opts]]
             [reply.main])

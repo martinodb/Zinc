@@ -3,7 +3,7 @@
         [clojure.pprint])
   (:require [clojure.set :as set]
             ;;; added by martinodb
-            [zinc.logging :as logging :refer [cl-format-info]]
+            [zinc.MOD-logging :as logging :refer [cl-format-info]]
             ;;;
               )
   (:import (java.util.regex Pattern)))

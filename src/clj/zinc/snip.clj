@@ -6,7 +6,7 @@
             [zinc.core.caseframes :as cf]
             [zinc.core.relations :as slot]
             ;;; added by martinodb
-            [zinc.logging :as logging :refer [cl-format-info]]
+            [zinc.MOD-logging :as logging :refer [cl-format-info]]
             ;;;
             [zinc.core.printer :as print]
             [clojure.walk :as walk])
