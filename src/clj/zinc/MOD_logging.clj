@@ -17,7 +17,7 @@
 
 
 ;; https://clojuredocs.org/clojure.core/with-out-str
-(defmacro with-out-str-dm "returns a data map with a key for the results and another for the output string"
+(defmacro wdm "returns a data map with a key for the results and another for the output string"
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -27,7 +27,7 @@
 
 
 
-(defmacro wrnlog-info-timbre "returns the result, logs the output string as info. Uses Timbre logging."
+(defmacro wtim "returns the result, logs the output string as info. Uses Timbre logging."
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -36,7 +36,7 @@
              r#) ))))
 
 
-(defmacro wrnlog-info-log "returns the result, logs the output string as info. Uses clojure.tools.logging."
+(defmacro wlog "returns the result, logs the output string as info. Uses clojure.tools.logging."
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -48,7 +48,7 @@
 ;;;;;;;;;
 
 
-(defmacro with-out-str-dm-2 "Like with-out-str-dm, but takes only one sexpr, without the parens, so there's no nesting"
+(defmacro wdm2 "Like wdm, but takes only one sexpr, without the parens, so there's no nesting"
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -58,7 +58,7 @@
 
 
 
-(defmacro wrnlog-info-timbre-2 "Like wrnlog-info-timbre, but takes only one sexpr, without the parens, so there's no nesting."
+(defmacro wtim2 "Like wtim, but takes only one sexpr, without the parens, so there's no nesting."
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -67,7 +67,7 @@
              r#) ))))
 
 
-(defmacro wrnlog-info-log-2 "Like wrnlog-info-log, but takes only one sexpr, without the parens, so there's no nesting."
+(defmacro wlog2 "Like wlog, but takes only one sexpr, without the parens, so there's no nesting."
   [& body]
   `(let [s# (new java.io.StringWriter)]
      (binding [*out* s#]
@@ -80,36 +80,52 @@
 
 
 
-(defn println-wrnlog-info-timbre "println replacement. Returns the result, logs the output string as info. Uses Timbre logging."
-[& more] (->> (apply println more)(wrnlog-info-timbre))  )
+(defn println-wtim "println replacement. Returns the result, logs the output string as info. Uses Timbre logging."
+[& more] (->> (apply println more)(wtim))  )
 
-(defn println-wrnlog-info-log "println replacement. Returns the result, logs the output string as info. Uses clojure.tools.logging."
-[& more] (->> (apply println more)(wrnlog-info-log))  )
+(defn println-wlog "println replacement. Returns the result, logs the output string as info. Uses clojure.tools.logging."
+[& more] (->> (apply println more)(wlog))  )
 
 
-(defn cl-format-wrnlog-info-timbre "cl-format replacement. Returns the result, logs the output string as info. Uses Timbre logging."
+(defn cl-format-wtim "cl-format replacement. Returns the result, logs the output string as info. Uses Timbre logging."
    [writer format-in & args]
   (let [args2  (into [writer format-in] args)]
-    (->> (apply cl-format args2) (wrnlog-info-timbre)  )  )  )
+    (->> (apply cl-format args2) (wtim)  )  )  )
 
-(defn cl-format-wrnlog-info-log "cl-format replacement. Returns the result, logs the output string as info. Uses clojure.tools.logging."
+(defn cl-format-wlog "cl-format replacement. Returns the result, logs the output string as info. Uses clojure.tools.logging."
    [writer format-in & args]
   (let [args2  (into [writer format-in] args)]
-    (->> (apply cl-format args2) (wrnlog-info-log)  )  )  )
+    (->> (apply cl-format args2) (wlog)  )  )  )
 
 
 
-;;; shorter names.
-(def wos with-out-str)
+;;;; shorter names.
+;;(def wos with-out-str)
+;(defmacro wos [&body] `(with-out-str ~@body))
 
-(def wdm with-out-str-dm)
-(def wtim wrnlog-info-timbre)
-(def wlog wrnlog-info-log)
-;;;
 
-(def wdm2 with-out-str-dm-2)
-(def wtim2 wrnlog-info-timbre-2)
-(def wlog2 wrnlog-info-log-2)
+
+
+;;(def wdm with-out-str-dm)
+;(defmacro wdm [&body] `(with-out-str-dm ~@body))
+
+;;(def wtim wrnlog-info-timbre)
+;(defmacro wtim [&body] `(wrnlog-info-timbre ~@body))
+
+;;(def wlog wrnlog-info-log)
+;(defmacro wlog [&body] `(wrnlog-info-log ~@body))
+;;;;
+
+;;(def wdm2 with-out-str-dm-2)
+;(defmacro wdm2 [&body] `(with-out-str-dm-2 ~@body))
+
+;;(def wtim2 wrnlog-info-timbre-2)
+;(defmacro wtim2 [&body] `(wrnlog-info-timbre-2 ~@body))
+
+;;(def wlog2 wrnlog-info-log-2)
+;(defmacro wlog2 [&body] `(wrnlog-info-log-2 ~@body))
+
+
 ;;;;;;;;;;
 
 
@@ -117,14 +133,14 @@
 
 
 ;;;; pick one.
-;(def println-info    println-wrnlog-info-log)
-(def println-info    println-wrnlog-info-timbre)
+;(def println-info    println-wlog)
+(def println-info    println-wtim)
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;; pick one.
-;(def cl-format-info    cl-format-wrnlog-info-log)
-(def cl-format-info cl-format-wrnlog-info-timbre)
+;(def cl-format-info    cl-format-wlog)
+(def cl-format-info cl-format-wtim)
 ;;;;;;;;;;;;;;;;;;;;;;
 
 
