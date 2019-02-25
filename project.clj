@@ -49,6 +49,7 @@
   ;:project-init (require 'clojure.pprint) 
   :repl-options {:init-ns zinc.core.snuser
                   :print clojure.core/println} ; :print clojure.pprint/pprint
+                  :timeout 250000
                  
   :jvm-opts ["-server"] 
   ;:main zinc.core.snuser
