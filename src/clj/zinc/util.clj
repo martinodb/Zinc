@@ -476,4 +476,5 @@
   [^java.util.Map sub ^java.util.Map m]
   (and (<= (count sub) (count m)) 
        (.containsAll (.entrySet m) (.entrySet sub))))
-
+(defn noop
+  [])
