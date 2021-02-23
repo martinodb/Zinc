@@ -46,16 +46,49 @@
         (.await ^CountingLatch (@snip/infer-status taskid)))
       (error "Rule " rule-name " does not exist."))))
 
-(defn adopt-rules 
-  "Takes a list of symbolic rule names to be adopted in order, one after the other. 
-   Rows may take the form of a single rule name, or a vector of rule names. A vector
-   of rule names will be adopted simultaneously."
-  [order]
-  (doseq [row order]
-    (if (vector? row)
-      (let [tasks (doall (map #(future (adopt-rule %)) row))]
-        (doall (map deref tasks)))
-      (adopt-rule row))))
+;(defn adopt-rules 
+  ;"Takes a list of symbolic rule names to be adopted in order, one after the other. 
+   ;Rows may take the form of a single rule name, or a vector of rule names. A vector
+   ;of rule names will be adopted simultaneously."
+  ;[order]
+  ;(doseq [row order]
+    ;(if (vector? row)
+      ;(let [tasks (doall (map #(future (adopt-rule %)) row))]
+        ;(doall (map deref tasks)))
+      ;(adopt-rule row))))
+
+(defn pause-rule []
+      ( println "\n--- pause ---\n")
+      ( println "\ninput: ")
+      (let [usrinput (read-line)]
+           (case usrinput
+                 "" (noop)
+                 "c" (do))
+           ))
+
+(defn adopt-rules
+      "Takes a list of symbolic rule names to be adopted in order, one after the other.
+       Rows may take the form of a single rule name, or a vector of rule names. A vector
+       of rule names will be adopted simultaneously."
+      [rules & {:keys [pause] :or {pause false}}]
+      (doseq [row rules]
+             (if (vector? row)
+                (do
+                (if pause
+                 (let [tasks (doall (map #(future (adopt-rule %)) row)(pause-rule))])
+
+                (let [tasks (doall (map #(future (adopt-rule %)) row))]
+                    (doall (map deref tasks))
+               )
+               )
+               )
+               (if pause
+                 (do
+                   (pause-rule)
+                   (adopt-rule row)
+                   )
+                 (adopt-rule row)))))
+
 
 
 
