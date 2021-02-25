@@ -257,94 +257,100 @@
   "Spawns tasks recursively to open valves in channels and begin performing
    backward-chaining inference. The network tries to derive term, and uses a
    set to track which nodes it has already visited."
-  ([term] 
-    (let [taskid (gensym "task")] 
-      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
-      (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
-  ([term taskid] 
-    (let [gt (gensym "task")
-          taskid (if taskid 
-                   taskid
-                   gt)]
-      (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
-      (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
-  ([term invoketermset taskid] 
-    (let [gt (gensym "task")
-          taskid (if taskid 
-                   taskid
-                   (do 
-                     (dosync (commute infer-status assoc gt (edu.buffalo.csneps.util.CountingLatch.)))
-                     gt))]
-    (backward-infer term -10 #{} invoketermset {} (ct/currentContext) taskid)))
+  ([term]
+   (let [taskid (gensym "task")]
+     (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+     (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
+  ([term taskid]
+   (let [gt (gensym "task")
+         taskid (if taskid
+                  taskid
+                  gt)]
+     (dosync (commute infer-status assoc taskid (edu.buffalo.csneps.util.CountingLatch.)))
+     (backward-infer term -10 #{} #{term} {} (ct/currentContext) taskid)))
+  ([term invoketermset taskid]
+   (let [gt (gensym "task")
+         taskid (if taskid
+                  taskid
+                  (do
+                    (dosync (commute infer-status assoc gt (edu.buffalo.csneps.util.CountingLatch.)))
+                    gt))]
+     (backward-infer term -10 #{} invoketermset {} (ct/currentContext) taskid)))
   ;; Opens appropriate in-channels, sends messages to their originators.
-  ([term depth visited invoketermset subst context taskid] 
-    
-    (dosync (commute (:future-bw-infer term) union invoketermset))
-    
+  ([term depth visited invoketermset subst context taskid]
+
+   (dosync (commute (:future-bw-infer term) union invoketermset))
+
     ;; Some rules need special backward-inferring into. 
-    (when-not (ct/asserted? term context)
-      (cond 
-        (and 
-          (= (syntactic-type-of term) :zinc.core/Implication)
-          (= (count (first (@down-cableset term))) 1))
-        (let [ant (ffirst (@down-cableset term))
-              ct (if ((ct/hyps (ct/currentContext)) ant)
-                   (ct/currentContext)
-                   (ct/defineContext 
-                     (gensym (:name (ct/currentContext))) 
-                     :parents (list (ct/currentContext))
-                     :hyps #{(:name ant)}))]
-          (doseq [cq (second (@down-cableset term))]    
-            (when taskid (.increment ^CountingLatch (@infer-status taskid)))
-            (.execute ^ThreadPoolExecutor executorService 
-              (priority-partial depth 
-                                (fn [t d v i s c id] 
-                                  (backward-infer t d v i s c id) 
-                                  (when id (.decrement ^CountingLatch (@infer-status id))))
-                                cq
-                                (dec depth)
-                                (conj visited term)
-                                invoketermset
-                                subst
-                                ct
-                                taskid))))))
-    
-    ;; Propogate backward-infer messages.
-    (doseq [ch (union (@ant-in-channels term) (@semtype-in-channels term) {})]
-      (when (and (not (visited term)))
-;                 (if-let [oppositech (build/find-channel (:destination ch) (:originator ch))]
-;                   (not (visited (:originator ch)))
-;                   true))
-                 
-                 ;(not (visited (:originator ch))))
-                 ;(not (subset? invoketermset @(:future-bw-infer (:originator ch)))))
-                 ;(not= (union @(:future-bw-infer (:originator ch)) invoketermset) @(:future-bw-infer (:originator ch))))
-        (print-debug :bw #{(:originator ch) (:destination ch)} (print-str "BW: Backward Infer -" depth "- opening channel from" (:originator ch) "to" term "(task" taskid")"))
-        (let [subst (add-valve-selector ch subst context taskid)]
-          ;; Semtype channels won't have an originator, so no need to propogate backward.
-          (when (:originator ch)
-	          (when subst ;; Will be nil if this is an old VS.
-	            (if (and taskid
-	                     (@infer-status taskid))
-	              (when taskid (.increment ^CountingLatch (@infer-status taskid)))
-	              (send screenprinter (fn [_]  
-	                                    (println) 
-	                                    (println "Warning: No taskid during backward infer on" ch) 
-	                                    (println "This may indicate a bug or race condition in the inference graph.")
-	                                    (println))))
-              (.execute ^ThreadPoolExecutor executorService 
-                    (priority-partial depth 
-                                      (fn [t d v i s c id] 
-                                        (backward-infer t d v i s c id) 
-                                        ;(send screenprinter (fn [_]  (println "dec-bwi" id))) 
-                                        (when (@infer-status id) (.decrement ^CountingLatch (@infer-status id))))
-                                      (:originator ch)
-                                      (dec depth)
-                                      (conj visited term)
-                                      invoketermset
-                                      subst
-                                      context
-                                      taskid)))))))))
+   (when-not (ct/asserted? term context)
+     (cond
+       (and
+        (= (syntactic-type-of term) :zinc.core/Implication)
+        (= (count (first (@down-cableset term))) 1))
+       (let [ant (ffirst (@down-cableset term))
+             ct (if ((ct/hyps (ct/currentContext)) ant)
+                  (ct/currentContext)
+                  (ct/defineContext
+                    (gensym (:name (ct/currentContext)))
+                    :parents (list (ct/currentContext))
+                    :hyps #{(:name ant)}))]
+         (doseq [cq (second (@down-cableset term))]
+           (when taskid (.increment ^CountingLatch (@infer-status taskid)))
+           (.execute ^ThreadPoolExecutor executorService
+                     (priority-partial depth
+                                       (fn [t d v i s c id]
+                                         (backward-infer t d v i s c id)
+                                         (when id (.decrement ^CountingLatch (@infer-status id))))
+                                       cq
+                                       (dec depth)
+                                       (conj visited term)
+                                       invoketermset
+                                       subst
+                                       ct
+                                       taskid))))))
+
+    ;; If term is not generic, and believed in the current context, we should not try to
+    ;; derive it again.
+   (when-not (and
+              (not (build/generic-term? term))
+              (not (carule? term))
+              (ct/asserted? term context))
+      ;; Propogate backward-infer messages.
+     (doseq [ch (union (@ant-in-channels term) (@semtype-in-channels term) {})]
+       (when (and (not (visited term)))
+  ;                 (if-let [oppositech (build/find-channel (:destination ch) (:originator ch))]
+  ;                   (not (visited (:originator ch)))
+  ;                   true))
+
+                   ;(not (visited (:originator ch))))
+                   ;(not (subset? invoketermset @(:future-bw-infer (:originator ch)))))
+                   ;(not= (union @(:future-bw-infer (:originator ch)) invoketermset) @(:future-bw-infer (:originator ch))))
+         (print-debug :bw #{(:originator ch) (:destination ch)} (print-str "BW: Backward Infer -" depth "- opening channel from" (:originator ch) "to" term "(task" taskid ")"))
+         (let [subst (add-valve-selector ch subst context taskid)]
+            ;; Semtype channels won't have an originator, so no need to propogate backward.
+           (when (:originator ch)
+             (when subst ;; Will be nil if this is an old VS.
+               (if (and taskid
+                        (@infer-status taskid))
+                 (when taskid (.increment ^CountingLatch (@infer-status taskid)))
+                 (send screenprinter (fn [_]
+                                       (println)
+                                       (println "Warning: No taskid during backward infer on" ch)
+                                       (println "This may indicate a bug or race condition in the inference graph.")
+                                       (println))))
+               (.execute ^ThreadPoolExecutor executorService
+                         (priority-partial depth
+                                           (fn [t d v i s c id]
+                                             (backward-infer t d v i s c id)
+                                          ;(send screenprinter (fn [_]  (println "dec-bwi" id)))
+                                             (when (@infer-status id) (.decrement ^CountingLatch (@infer-status id))))
+                                           (:originator ch)
+                                           (dec depth)
+                                           (conj visited term)
+                                           invoketermset
+                                           subst
+                                           context
+                                           taskid))))))))))
 
 (defn cancel-infer
   "Same idea as backward-infer, except it closes valves. Cancelling inference
