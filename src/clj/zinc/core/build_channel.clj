@@ -146,11 +146,12 @@
     ;; informing it that it is true.
   
     ;; Submit a message for the originator. 
-    (when (and 
-            (or (= type :i-channel)
-                (= type :g-channel))
-            (not (variableTerm? orig))
-            (not= (syntactic-type-of orig) :zinc.core/Negation))
+    (when (and
+           (or (= type :i-channel)
+               (= type :g-channel))
+           (not (variableTerm? orig))
+           (not (carule? orig))
+           (not= (syntactic-type-of orig) :zinc.core/Negation))
       (submit-to-channel ch (new-message {:origin orig
                                           :support-set #{['hyp #{(:name orig)}]}
                                           :flaggedns {orig true}
