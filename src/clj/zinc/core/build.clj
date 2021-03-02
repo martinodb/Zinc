@@ -4,6 +4,7 @@
             [zinc.core.printer :as print]
             [zinc.core.relations :as slot]
             [clojure.core.match :as match]
+            [zinc.debug :as debug]
             [clojure.math.numeric-tower :as math]
             [clojure.math.combinatorics :as cb]
             [clojure.zip :as zip]
@@ -37,6 +38,11 @@
             that doesn't already have a caseframe.")
 
 (defvar ^:dynamic *PRECISION* 5)
+
+;; I'd rather this be in snuser or snip, but it's forced to be here for now.
+(def verbose-rules
+  "If non-nil, rules will output their bindings when fired."
+  (atom nil))
 
 (defn wftname?
   "Returns True if the input name looks like a wftname;
@@ -382,7 +388,9 @@
                                       (set/union subs sub)))))
         actfn (bound-fn [subst] 
                 (when (= (count subs) (count (filter (fn [[k v]] (subst v)) subs)))
-	                ;(println "Forms:" forms "\nSubs" (into {} (map (fn [[k v]] [k (:name (subst v))]) subs))) 
+	                ;(println "Forms:" forms "\nSubs" (into {} (map (fn [[k v]] [k (:name (subst v))]) subs)))
+ 	                (when @verbose-rules
+                    (send debug/screenprinter (fn [_] (println rulename "firing with substitutions:" (into {} (map (fn [[k v]] [k (:name (subst v))]) subs))))))
                   (eval-forms-with-locals (into {} (map (fn [[k v]] [k (:name (subst v))]) subs)) forms)))
         name (build rulename :Thing {} #{})
         act (build (str "act" (.hashCode forms)) :Action {} #{})
